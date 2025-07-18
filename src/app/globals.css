@@ -1,26 +1,19 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-background: #EBEDF3;
+  --color-bvnk-primary: #3F53DD;
+  --color-grays-text: #556877;
+  --color-grays-not-quite-black: #0A1628;
+  --color-grays-line-gray: #E3E8EE;
+  --color-white: #FFFFFF;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* I thought this would be off-white but Figma shows it as #FFFFFF
+   * might want to change its name for clarity + update all the literals #FFFFFF in Figma to this color
+   */
+  --color-surfaces-cloudy-white: #FFFFFF;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
 }
