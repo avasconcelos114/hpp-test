@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { cn } from '@/lib/utils/style';
+import { cn } from '@/lib/utils';
 
 export type TypographySize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type TypographyWeight = 'regular' | 'medium' | 'semibold' | 'bold';
@@ -51,7 +51,7 @@ const Typography = ({
   return (
     <Component
       className={cn(
-        'text-grays-not-quite-black',
+        'text-grays-not-quite-black m-0',
         sizeClassName,
         weightClassName,
         className,

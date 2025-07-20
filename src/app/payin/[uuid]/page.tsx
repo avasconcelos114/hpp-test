@@ -9,7 +9,7 @@ export default function AcceptQuotePage() {
         <Typography size='xl' weight='semibold'>
           BVNK Test
         </Typography>
-        <Typography size='md' weight='regular' className='text-grays-text'>
+        <Typography size='md' weight='regular'>
           Please click on the button below to begin the payment process.
         </Typography>
         <Button>Begin Payment</Button>

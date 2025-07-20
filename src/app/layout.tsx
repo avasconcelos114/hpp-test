@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { cn } from '@/lib/utils/style';
+import { cn } from '@/lib/utils';
 import './globals.css';
 
 const inter = Inter({
@@ -23,7 +23,7 @@ export default function RootLayout({
       <body
         className={cn(
           inter.variable,
-          'flex h-screen w-screen items-center justify-center',
+          'bg-background flex h-screen w-screen items-center justify-center',
           'antialiased',
         )}
       >
