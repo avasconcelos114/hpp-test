@@ -8,7 +8,7 @@
   --color-grays-not-quite-black: #0A1628;
   --color-grays-line-gray: #E3E8EE;
   --color-white: #FFFFFF;
-  --color-destructive: #FF785F;
+  --color-status-error: #FF785F;
 
   /* I thought this would be off-white but Figma shows it as #FFFFFF
    * might want to change its name for clarity + update all the literals #FFFFFF in Figma to this color

@@ -1,4 +1,4 @@
-import { object, string, number, InferType } from 'yup';
+import { object, string, number, InferType, array, boolean } from 'yup';
 
 export const PayInMethodSchema = string().oneOf([
   'crypto',
@@ -19,6 +19,7 @@ export const TransactionStatusSchema = string().oneOf([
   'PENDING',
   'COMPLETED',
   'FAILED',
+  'EXPIRED',
 ]);
 export type TransactionStatus = InferType<typeof TransactionStatusSchema>;
 
@@ -31,7 +32,7 @@ export const TransactionSubTypeSchema = string().oneOf([
 export type TransactionSubType = InferType<typeof TransactionSubTypeSchema>;
 
 export const TransactionCurrencySchema = object({
-  currency: string().required(),
+  currency: string().nullable(),
   amount: number().required(),
   actual: number().required(),
 });
@@ -45,14 +46,25 @@ export type UpdateTransactionSummaryRequest = InferType<
   typeof UpdateTransactionSummaryRequestSchema
 >;
 
+export const CurrencyOptionSchema = object({
+  code: string().required(),
+  protocols: array().of(string().uppercase().required()).required(),
+});
+
+export const NetworkFeeBilledToSchema = string().oneOf([
+  'MERCHANT',
+  'CUSTOMER', // Another educated guess
+]);
+export type NetworkFeeBilledTo = InferType<typeof NetworkFeeBilledToSchema>;
+
 export const TransactionSummarySchema = object({
   uuid: string().required(),
   merchantDisplayName: string().required(),
-  merchantId: string().required(),
+  merchantId: string().uuid().required(),
   dateCreated: number().required(),
   expiryDate: number().required(),
-  quoteExpiryDate: number().nullable().required(),
-  acceptanceExpiryDate: number().nullable().required(),
+  quoteExpiryDate: number().nullable(),
+  acceptanceExpiryDate: number().nullable(),
   quoteStatus: QuoteStatusSchema.required(),
   reference: string().required(),
   type: TransactionTypeSchema.required(),
@@ -62,10 +74,22 @@ export const TransactionSummarySchema = object({
   walletCurrency: TransactionCurrencySchema.required(),
   paidCurrency: TransactionCurrencySchema.required(),
   feeCurrency: TransactionCurrencySchema.required(),
-  displayRate: number().nullable().required(),
-  exchangeRate: number().nullable().required(),
-  address: string().nullable().required(),
-  returnUrl: string().nullable(),
+  networkFeeCurrency: TransactionCurrencySchema.required(),
+  displayRate: number().nullable(),
+  exchangeRate: number().nullable(),
+  address: string().nullable(),
+  returnUrl: string(),
   redirectUrl: string().nullable(),
+  transactions: array().of(object()).required(),
+  refund: object().nullable(),
+  refunds: array().of(object()).required(),
+  currencyOptions: array().of(CurrencyOptionSchema).required(),
+  flow: string().required(),
+  twoStep: boolean().required(),
+  pegged: boolean().required(),
+  customerId: string().required(),
+  networkFeeBilledTo: string().required(),
+  networkFeeRates: array(),
+  walletId: string().required(),
 });
 export type TransactionSummary = InferType<typeof TransactionSummarySchema>;

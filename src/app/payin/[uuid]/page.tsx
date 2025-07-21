@@ -7,7 +7,7 @@ import {
 
 import * as transactionApi from '@/api/transactions';
 import { payInPageSchema } from '@/lib/schemas/pages';
-import { AcceptQuoteComponent } from '@/components/accept-quote';
+import { AcceptQuoteComponent } from '@/components/containers/accept-quote';
 import { TRANSACTION_SUMMARY_QUERY_KEY } from '@/lib/queries';
 
 export default async function AcceptQuotePage(props: {
@@ -18,6 +18,7 @@ export default async function AcceptQuotePage(props: {
   try {
     await payInPageSchema.validate(params);
   } catch {
+    // TODO: figure out if i want a custom 404 page or just render the error card
     redirect('/404');
   }
 
@@ -29,10 +30,10 @@ export default async function AcceptQuotePage(props: {
   });
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className='flex h-screen w-screen items-center justify-center'>
+    <div className='flex h-screen w-screen items-center justify-center'>
+      <HydrationBoundary state={dehydrate(queryClient)}>
         <AcceptQuoteComponent uuid={params.uuid} />
-      </div>
-    </HydrationBoundary>
+      </HydrationBoundary>
+    </div>
   );
 }

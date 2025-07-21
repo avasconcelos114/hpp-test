@@ -13,7 +13,7 @@ export default function HomePage() {
           following URL to begin the payment process:{' '}
           <code className='bg-grays-line-gray rounded-md px-1 py-0.5 font-mono text-sm'>
             /payin/&#123;uuid&#125;
-          </code>{' '}
+          </code>
         </Typography>
       </Card>
     </div>
