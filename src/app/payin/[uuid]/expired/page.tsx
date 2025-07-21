@@ -1,10 +1,10 @@
-import Card from '@/components/ui/card_test';
-import Typography from '@/components/ui/typography_test';
+import { Card } from '@/components/ui/card';
+import { Typography } from '@/components/ui/typography';
 
 export default function ExpiredQuotePage() {
   return (
-    <div className='w-[460px]'>
-      <Card>
+    <div className='flex h-screen w-screen items-center justify-center'>
+      <Card className='w-[460px]'>
         <Typography size='lg' weight='medium'>
           Merchant Name
         </Typography>

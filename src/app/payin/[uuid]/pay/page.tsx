@@ -1,10 +1,10 @@
-import Card from '@/components/ui/card_test';
-import Typography from '@/components/ui/typography_test';
+import { Card } from '@/components/ui/card';
+import { Typography } from '@/components/ui/typography';
 
 export default function PayQuotePage() {
   return (
-    <div className='w-[460px]'>
-      <Card></Card>
+    <div className='flex h-screen w-screen items-center justify-center'>
+      <Card className='w-[460px]'></Card>
     </div>
   );
 }

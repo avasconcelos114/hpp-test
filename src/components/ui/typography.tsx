@@ -37,7 +37,7 @@ const weightStyles: Record<TypographyWeight, string> = {
   bold: 'font-bold',
 };
 
-const Typography = ({
+export const Typography = ({
   size = 'md',
   tag = 'p',
   weight = 'regular',
@@ -61,5 +61,3 @@ const Typography = ({
     </Component>
   );
 };
-
-export default Typography;
