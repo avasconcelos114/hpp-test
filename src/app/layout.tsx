@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
+import Providers from './providers';
 import './globals.css';
 
 const inter = Inter({
@@ -27,7 +28,7 @@ export default function RootLayout({
           'antialiased',
         )}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

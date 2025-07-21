@@ -8,6 +8,7 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  adapter: 'fetch', // Using fetch to ensure interopetability with Next.js
   paramsSerializer: {
     indexes: null,
   },

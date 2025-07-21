@@ -1,42 +1,38 @@
-import { GetServerSidePropsContext } from 'next';
-import { string, object } from 'yup';
+import { redirect } from 'next/navigation';
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query';
 
-// API
 import * as transactionApi from '@/api/transactions';
+import { payInPageSchema } from '@/lib/schemas/pages';
+import { AcceptQuoteComponent } from '@/components/accept-quote';
+import { TRANSACTION_SUMMARY_QUERY_KEY } from '@/lib/queries';
 
-// Components
-import { Card } from '@/components/ui/card';
-import { Typography } from '@/components/ui/typography';
-import { Button } from '@/components/ui/button';
+export default async function AcceptQuotePage(props: {
+  params: { uuid: string };
+}) {
+  // Validating UUID server-side to avoid hydration errors
+  const params = await props.params;
+  try {
+    await payInPageSchema.validate(params);
+  } catch {
+    redirect('/404');
+  }
 
-export default function AcceptQuotePage() {
-  return (
-    <div className='flex h-screen w-screen items-center justify-center'>
-      <Card className='w-[460px]'></Card>
-    </div>
-  );
-}
-
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext,
-) => {
-  const paramsSchema = object({
-    uuid: string().uuid().required(),
+  // Prefetching transaction server-side
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: [TRANSACTION_SUMMARY_QUERY_KEY, params.uuid],
+    queryFn: () => transactionApi.getTransactionSummary(params.uuid),
   });
 
-  try {
-    const params = await paramsSchema.validate(context.params);
-    const response = await transactionApi.getTransactionSummary(params.uuid);
-
-    return {
-      props: {
-        transaction: response.data,
-      },
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      notFound: true,
-    };
-  }
-};
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <div className='flex h-screen w-screen items-center justify-center'>
+        <AcceptQuoteComponent uuid={params.uuid} />
+      </div>
+    </HydrationBoundary>
+  );
+}
