@@ -1,8 +1,11 @@
+import { AxiosError } from 'axios';
 import { axiosInstance } from './axios-instance';
 import {
   UpdateTransactionSummaryRequest,
   TransactionSummary,
   TransactionSummarySchema,
+  TransactionError,
+  TransactionErrorSchema,
 } from '@/lib/schemas/transaction';
 
 /**
@@ -15,12 +18,18 @@ export const getTransactionSummary = async (
 ): Promise<TransactionSummary> => {
   try {
     const response = await axiosInstance.get(`/api/v1/pay/${uuid}/summary`);
-    console.log(JSON.stringify(response.data, null, 2));
     const summary = await TransactionSummarySchema.validate(response.data);
     return summary as TransactionSummary;
   } catch (error) {
-    console.error(error);
-    throw error;
+    const errorResponse = error as AxiosError;
+    try {
+      const errorData = await TransactionErrorSchema.validate(
+        errorResponse.response?.data,
+      );
+      throw errorData;
+    } catch {
+      throw error;
+    }
   }
 };
 
@@ -33,27 +42,25 @@ export const getTransactionSummary = async (
 export const updateTransactionSummary = async (
   uuid: string,
   request: UpdateTransactionSummaryRequest,
-): Promise<boolean> => {
+): Promise<TransactionSummary> => {
   try {
     const response = await axiosInstance.put(
       `/api/v1/pay/${uuid}/update/summary`,
       request,
     );
-    return response.status === 200;
+    const summary = await TransactionSummarySchema.validate(response.data);
+    return summary as TransactionSummary;
   } catch (error) {
-    console.error(error);
-    throw error;
+    const errorResponse = error as AxiosError;
+    try {
+      const errorData = await TransactionErrorSchema.validate(
+        errorResponse.response?.data,
+      );
+      throw errorData;
+    } catch {
+      throw error;
+    }
   }
-};
-
-/**
- * Refresh the transaction summary for a given UUID, this is the start point of each transaction
- * @param uuid - The UUID of the transaction
- * @returns [boolean] - Whether the transaction summary was refreshed successfully
- */
-export const refreshQuote = async (uuid: string) => {
-  const response = await axiosInstance.put(`/api/v1/pay/${uuid}/summary`);
-  return response.data;
 };
 
 export const acceptSummary = async (uuid: string): Promise<boolean> => {

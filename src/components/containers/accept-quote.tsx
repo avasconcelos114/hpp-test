@@ -1,21 +1,40 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { redirect } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { ErrorCard } from '@/components/containers/error-card';
 import { Typography } from '@/components/ui/typography';
-import { useTransactionSummary } from '@/lib/queries';
+import {
+  useTransactionSummary,
+  useUpdateTransactionSummary,
+} from '@/lib/queries';
 import { Select } from '@/components/ui/select';
+import { QuoteOfferingComponent } from './quote-offering';
+import { API_ERROR_MESSAGES } from '@/lib/constants';
+import {
+  TransactionError,
+  TransactionSummary,
+} from '@/lib/schemas/transaction';
+import { AxiosError } from 'axios';
 
 export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
+  const [transaction, setTransaction] = useState<TransactionSummary | null>(
+    null,
+  );
+  const [error, setError] = useState<TransactionError | null>(null);
+
+  const { data: initialTransaction, error: initialError } =
+    useTransactionSummary(uuid);
+  const {
+    mutate: updateTransactionSummary,
+    data: updatedTransaction,
+    isError: isUpdateError,
+    error: updateError,
+    isPending: isUpdatePending,
+  } = useUpdateTransactionSummary(uuid);
+
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>('none');
-  const { data: transaction, isError } = useTransactionSummary(uuid);
-
-  const hasSelectedPayment = useMemo(
-    () => selectedPaymentMethod !== 'none',
-    [selectedPaymentMethod],
-  );
 
   const paymentOptions = [
     { value: 'none', label: 'Select currency' },
@@ -24,16 +43,53 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
     { value: 'LTC', label: 'Litecoin' },
   ];
 
+  const hasSelectedPayment = useMemo(
+    () => selectedPaymentMethod !== 'none',
+    [selectedPaymentMethod],
+  );
+
+  useEffect(() => {
+    if (initialError) {
+      const axiosError = initialError as AxiosError;
+      setError(axiosError.response?.data as unknown as TransactionError);
+    }
+  }, [initialError, updateError]);
+
   if (transaction?.status === 'EXPIRED') {
     redirect(`/payin/${uuid}/expired`);
   }
 
-  if (isError) {
+  useEffect(() => {
+    const expiredCodes = ['MER-PAY-2004', 'MER-PAY-2017'];
+    if (
+      isUpdateError &&
+      updateError &&
+      expiredCodes.includes(updateError?.code)
+    ) {
+      // When the transaction has expired, we redirect to the expired page
+      redirect(`/payin/${uuid}/expired`);
+    } else if (isUpdateError && updateError) {
+      // For other error codes, we just change the error message
+      setError(updateError);
+    }
+  }, [isUpdateError, updateError, error]);
+
+  async function handleSelectPaymentMethod(paymentMethod: string) {
+    console.log('handleSelectPaymentMethod', paymentMethod);
+    setSelectedPaymentMethod(paymentMethod);
+    updateTransactionSummary({
+      currency: paymentMethod,
+
+      // This is hard-coded since the test only deals with crypto
+      // But normally we would have a dictionary or API endpoint that displays all viable choices
+      // and what their payInMethod is
+      payInMethod: 'crypto',
+    });
+  }
+
+  if (error) {
     return (
-      <ErrorCard
-        title='Error'
-        description='Something went wrong while fetching the transaction summary'
-      />
+      <ErrorCard title='Error' description={API_ERROR_MESSAGES[error.code]} />
     );
   }
 
@@ -78,35 +134,22 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
             id='pay-with-select'
             value={selectedPaymentMethod}
             label='Pay with'
-            onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+            onChange={(e) => handleSelectPaymentMethod(e.target.value)}
             options={paymentOptions}
           />
         </div>
 
         {hasSelectedPayment && (
-          <>
-            <hr className='w-full' />
-            <div className='flex flex-row items-center justify-between'>
-              <Typography
-                size='sm'
-                weight='regular'
-                className='text-grays-text'
-              >
-                Amount due
-              </Typography>
-            </div>
-            <hr className='w-full' />
-            <div className='flex flex-row items-center justify-between'>
-              <Typography
-                size='sm'
-                weight='regular'
-                className='text-grays-text'
-              >
-                Quoted price expires in
-              </Typography>
-            </div>
-            <hr className='w-full' />
-          </>
+          <QuoteOfferingComponent
+            transaction={updatedTransaction}
+            refreshQuote={() => {
+              updateTransactionSummary({
+                currency: selectedPaymentMethod,
+                payInMethod: 'crypto',
+              });
+            }}
+            isLoading={isUpdatePending}
+          />
         )}
       </div>
     </Card>

@@ -51,6 +51,13 @@ export const CurrencyOptionSchema = object({
   protocols: array().of(string().uppercase().required()).required(),
 });
 
+export const ExchangeRateSchema = object({
+  base: string().required(),
+  counter: string().required(),
+  rate: number().required(),
+});
+export type ExchangeRate = InferType<typeof ExchangeRateSchema>;
+
 export const NetworkFeeBilledToSchema = string().oneOf([
   'MERCHANT',
   'CUSTOMER', // Another educated guess
@@ -75,16 +82,16 @@ export const TransactionSummarySchema = object({
   paidCurrency: TransactionCurrencySchema.required(),
   feeCurrency: TransactionCurrencySchema.required(),
   networkFeeCurrency: TransactionCurrencySchema.required(),
-  displayRate: number().nullable(),
-  exchangeRate: number().nullable(),
+  displayRate: ExchangeRateSchema.nullable(),
+  exchangeRate: ExchangeRateSchema.nullable(),
   address: string().nullable(),
   returnUrl: string(),
   redirectUrl: string().nullable(),
   transactions: array().of(object()).required(),
   refund: object().nullable(),
   refunds: array().of(object()).required(),
-  currencyOptions: array().of(CurrencyOptionSchema).required(),
-  flow: string().required(),
+  currencyOptions: array().of(CurrencyOptionSchema).nullable(),
+  flow: string().nullable(),
   twoStep: boolean().required(),
   pegged: boolean().required(),
   customerId: string().required(),
@@ -93,3 +100,19 @@ export const TransactionSummarySchema = object({
   walletId: string().required(),
 });
 export type TransactionSummary = InferType<typeof TransactionSummarySchema>;
+
+export const TransactionErrorCodesSchema = string()
+  .oneOf(['MER-PAY-2008', 'MER-PAY-2017', 'MER-PAY-2004', 'MER-PAY-2028'])
+  .required();
+export type TransactionErrorCodes = InferType<
+  typeof TransactionErrorCodesSchema
+>;
+
+export const TransactionErrorSchema = object({
+  code: TransactionErrorCodesSchema.required(),
+  status: string().required(),
+  message: string().required(),
+  documentLink: string().nullable(),
+  requestId: string().required(),
+});
+export type TransactionError = InferType<typeof TransactionErrorSchema>;
