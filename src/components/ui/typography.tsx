@@ -20,6 +20,8 @@ interface TypographyProps {
   weight?: TypographyWeight;
   children?: ReactNode;
   className?: string;
+  htmlFor?: string;
+  id?: string;
 }
 
 const sizeStyles: Record<TypographySize, string> = {
@@ -43,6 +45,8 @@ export const Typography = ({
   weight = 'regular',
   children,
   className = '',
+  htmlFor,
+  id,
 }: TypographyProps) => {
   const Component = tag;
   const sizeClassName = sizeStyles[size];
@@ -56,6 +60,8 @@ export const Typography = ({
         weightClassName,
         className,
       )}
+      htmlFor={htmlFor}
+      id={id}
     >
       {children}
     </Component>
