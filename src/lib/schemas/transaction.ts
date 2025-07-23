@@ -1,4 +1,5 @@
 import { object, string, number, InferType, array, boolean } from 'yup';
+import { supportedCurrenciesSchema } from './pages';
 
 export const PayInMethodSchema = string().oneOf([
   'crypto',
@@ -39,7 +40,7 @@ export const TransactionCurrencySchema = object({
 export type TransactionCurrency = InferType<typeof TransactionCurrencySchema>;
 
 export const UpdateTransactionSummaryRequestSchema = object({
-  currency: string().required(),
+  currency: supportedCurrenciesSchema.required(),
   payInMethod: PayInMethodSchema.required(),
 });
 export type UpdateTransactionSummaryRequest = InferType<
@@ -64,6 +65,15 @@ export const NetworkFeeBilledToSchema = string().oneOf([
 ]);
 export type NetworkFeeBilledTo = InferType<typeof NetworkFeeBilledToSchema>;
 
+export const AddressSchema = object({
+  address: string().required(),
+  alternatives: array().of(string()).nullable(),
+  protocol: string().required(),
+  tag: string().nullable(),
+  uri: string().required(),
+});
+export type Address = InferType<typeof AddressSchema>;
+
 export const TransactionSummarySchema = object({
   uuid: string().required(),
   merchantDisplayName: string().required(),
@@ -79,12 +89,16 @@ export const TransactionSummarySchema = object({
   status: TransactionStatusSchema.required(),
   displayCurrency: TransactionCurrencySchema.required(),
   walletCurrency: TransactionCurrencySchema.required(),
-  paidCurrency: TransactionCurrencySchema.required(),
+  paidCurrency: object({
+    currency: supportedCurrenciesSchema.nullable(),
+    amount: number().required(),
+    actual: number().required(),
+  }).nullable(),
   feeCurrency: TransactionCurrencySchema.required(),
   networkFeeCurrency: TransactionCurrencySchema.required(),
   displayRate: ExchangeRateSchema.nullable(),
   exchangeRate: ExchangeRateSchema.nullable(),
-  address: string().nullable(),
+  address: AddressSchema.nullable(),
   returnUrl: string(),
   redirectUrl: string().nullable(),
   transactions: array().of(object()).required(),
@@ -95,7 +109,7 @@ export const TransactionSummarySchema = object({
   twoStep: boolean().required(),
   pegged: boolean().required(),
   customerId: string().required(),
-  networkFeeBilledTo: string().required(),
+  networkFeeBilledTo: NetworkFeeBilledToSchema.required(),
   networkFeeRates: array(),
   walletId: string().required(),
 });

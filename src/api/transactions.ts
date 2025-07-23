@@ -22,6 +22,7 @@ export const getTransactionSummary = async (
     return summary as TransactionSummary;
   } catch (error) {
     const errorResponse = error as AxiosError;
+    console.error(errorResponse);
     try {
       const errorData = await TransactionErrorSchema.validate(
         errorResponse.response?.data,
@@ -34,10 +35,10 @@ export const getTransactionSummary = async (
 };
 
 /**
- * Updates the transaction summary when a currency is selected
+ * Updates the transaction summary when a currency is selected, or when a quote is refreshed
  * @param uuid - The UUID of the transaction
  * @param request - The request object with currency and pa information
- * @returns [boolean] - Whether the transaction summary was updated successfully
+ * @returns [TransactionSummary] - The updated transaction summary
  */
 export const updateTransactionSummary = async (
   uuid: string,
@@ -63,7 +64,12 @@ export const updateTransactionSummary = async (
   }
 };
 
-export const acceptSummary = async (uuid: string): Promise<boolean> => {
+/**
+ * Confirms the quote for a given transaction
+ * @param uuid - The UUID of the transaction
+ * @returns [boolean] - Whether the quote was confirmed successfully
+ */
+export const confirmQuote = async (uuid: string): Promise<boolean> => {
   const response = await axiosInstance.put(
     `/api/v1/pay/${uuid}/accept/summary`,
   );

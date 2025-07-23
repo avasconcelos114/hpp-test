@@ -1,5 +1,5 @@
 'use client';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { redirect } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { ErrorCard } from '@/components/containers/error-card';
@@ -7,15 +7,17 @@ import { Typography } from '@/components/ui/typography';
 import {
   useTransactionSummary,
   useUpdateTransactionSummary,
+  useConfirmQuote,
 } from '@/lib/queries';
 import { Select } from '@/components/ui/select';
 import { QuoteOfferingComponent } from './quote-offering';
-import { API_ERROR_MESSAGES } from '@/lib/constants';
+import { API_ERROR_MESSAGES, SUPPORTED_CURRENCIES_MAP } from '@/lib/constants';
 import {
   TransactionError,
   TransactionSummary,
 } from '@/lib/schemas/transaction';
 import { AxiosError } from 'axios';
+import { SupportedCurrencies } from '@/lib/schemas/pages';
 
 export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
   const [transaction, setTransaction] = useState<TransactionSummary | null>(
@@ -28,19 +30,35 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
   const {
     mutate: updateTransactionSummary,
     data: updatedTransaction,
-    isError: isUpdateError,
     error: updateError,
     isPending: isUpdatePending,
   } = useUpdateTransactionSummary(uuid);
+  const {
+    mutate: confirmQuote,
+    isPending: isConfirmPending,
+    isSuccess: isConfirmSuccess,
+  } = useConfirmQuote(uuid);
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>('none');
 
-  const paymentOptions = [
+  const paymentOptions: {
+    value: SupportedCurrencies | 'none';
+    label: string;
+  }[] = [
     { value: 'none', label: 'Select currency' },
-    { value: 'BTC', label: 'Bitcoin' },
-    { value: 'ETH', label: 'Ethereum' },
-    { value: 'LTC', label: 'Litecoin' },
+    {
+      value: 'BTC',
+      label: SUPPORTED_CURRENCIES_MAP['BTC'],
+    },
+    {
+      value: 'ETH',
+      label: SUPPORTED_CURRENCIES_MAP['ETH'],
+    },
+    {
+      value: 'LTC',
+      label: SUPPORTED_CURRENCIES_MAP['LTC'],
+    },
   ];
 
   const hasSelectedPayment = useMemo(
@@ -48,38 +66,72 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
     [selectedPaymentMethod],
   );
 
+  const refreshQuote = useCallback(() => {
+    if (selectedPaymentMethod === 'none') return;
+
+    updateTransactionSummary({
+      currency: selectedPaymentMethod as SupportedCurrencies,
+      // This is hard-coded since the test only deals with crypto
+      // But normally we would have a dictionary or API endpoint that displays all viable choices
+      // and what their payInMethod is
+      payInMethod: 'crypto',
+    });
+  }, [selectedPaymentMethod, updateTransactionSummary]);
+
+  console.log(initialTransaction);
   useEffect(() => {
-    if (initialError) {
-      const axiosError = initialError as AxiosError;
-      setError(axiosError.response?.data as unknown as TransactionError);
+    const baseTransaction = updatedTransaction || initialTransaction;
+
+    if (baseTransaction) {
+      setTransaction(baseTransaction);
     }
-  }, [initialError, updateError]);
+  }, [initialTransaction, updatedTransaction]);
+
+  useEffect(() => {
+    if (initialTransaction?.paidCurrency?.currency) {
+      // Auto select the payment method if it's already been set in another session
+      handleSelectPaymentMethod(initialTransaction.paidCurrency?.currency);
+    }
+  }, [initialTransaction]);
 
   if (transaction?.status === 'EXPIRED') {
     redirect(`/payin/${uuid}/expired`);
   }
 
+  if (transaction?.quoteStatus === 'ACCEPTED') {
+    redirect(`/payin/${uuid}/pay`);
+  }
+
+  useEffect(() => {
+    if (isConfirmSuccess) {
+      redirect(`/payin/${uuid}/pay`);
+    }
+  }, [isConfirmSuccess, uuid]);
+
   useEffect(() => {
     const expiredCodes = ['MER-PAY-2004', 'MER-PAY-2017'];
-    if (
-      isUpdateError &&
-      updateError &&
-      expiredCodes.includes(updateError?.code)
-    ) {
+    if (updateError && expiredCodes.includes(updateError?.code)) {
       // When the transaction has expired, we redirect to the expired page
       redirect(`/payin/${uuid}/expired`);
-    } else if (isUpdateError && updateError) {
+    } else if (updateError) {
       // For other error codes, we just change the error message
       setError(updateError);
+    } else if (initialError) {
+      const axiosError = initialError as AxiosError;
+      setError(axiosError.response?.data as unknown as TransactionError);
     }
-  }, [isUpdateError, updateError, error]);
+  }, [updateError, initialError, uuid]);
+
+  async function handleConfirmQuote() {
+    await confirmQuote();
+  }
 
   async function handleSelectPaymentMethod(paymentMethod: string) {
-    console.log('handleSelectPaymentMethod', paymentMethod);
     setSelectedPaymentMethod(paymentMethod);
-    updateTransactionSummary({
-      currency: paymentMethod,
+    if (paymentMethod === 'none') return;
 
+    updateTransactionSummary({
+      currency: paymentMethod as SupportedCurrencies,
       // This is hard-coded since the test only deals with crypto
       // But normally we would have a dictionary or API endpoint that displays all viable choices
       // and what their payInMethod is
@@ -89,7 +141,10 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
 
   if (error) {
     return (
-      <ErrorCard title='Error' description={API_ERROR_MESSAGES[error.code]} />
+      <ErrorCard
+        title={error.message || 'Error'}
+        description={API_ERROR_MESSAGES[error.code]}
+      />
     );
   }
 
@@ -142,13 +197,9 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
         {hasSelectedPayment && (
           <QuoteOfferingComponent
             transaction={updatedTransaction}
-            refreshQuote={() => {
-              updateTransactionSummary({
-                currency: selectedPaymentMethod,
-                payInMethod: 'crypto',
-              });
-            }}
-            isLoading={isUpdatePending}
+            refreshQuote={refreshQuote}
+            confirmQuote={handleConfirmQuote}
+            isLoading={isUpdatePending || isConfirmPending}
           />
         )}
       </div>

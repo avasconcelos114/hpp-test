@@ -20,7 +20,7 @@ export default async function AcceptQuotePage({
   try {
     await payInPageSchema.validate({ uuid });
   } catch {
-    redirect('/404');
+    redirect(`/payin/${uuid}/invalid`);
   }
 
   // Prefetching transaction server-side

@@ -1,6 +1,7 @@
 import {
   getTransactionSummary,
   updateTransactionSummary,
+  confirmQuote,
 } from '@/api/transactions';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
@@ -25,5 +26,14 @@ export const useUpdateTransactionSummary = (uuid: string) => {
     },
     mutationFn: (summary: UpdateTransactionSummaryRequest) =>
       updateTransactionSummary(uuid, summary),
+  });
+};
+
+export const useConfirmQuote = (uuid: string) => {
+  return useMutation({
+    onError: (error: TransactionError) => {
+      return error;
+    },
+    mutationFn: () => confirmQuote(uuid),
   });
 };

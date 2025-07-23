@@ -1,74 +1,53 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+
 import { Typography } from '@/components/ui/typography';
+import { Button } from '@/components/ui/button';
 import { TransactionSummary } from '@/lib/schemas/transaction';
-import { useRef } from 'react';
+import { useTimer } from '@/hooks/useTimer';
 
 type QuoteOfferingComponentProps = {
   transaction?: TransactionSummary;
   refreshQuote: () => void;
+  confirmQuote: () => void;
   isLoading: boolean;
 };
 
 export function QuoteOfferingComponent({
   transaction,
   refreshQuote,
+  confirmQuote,
   isLoading,
 }: QuoteOfferingComponentProps) {
-  const [now, setNow] = useState(Date.now());
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const { isExpired, formattedTimeUntilExpiry } = useTimer(
+    // What is the difference between acceptanceExpiryDate and quoteExpiryDate?
+    // Is one just a legacy value kept by the API?
+    transaction?.acceptanceExpiryDate ?? null,
+  );
 
   useEffect(() => {
-    setNow(Date.now()); // Reset timer on transaction change
-
-    if (!transaction?.acceptanceExpiryDate) return;
-
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
+    if (isExpired && transaction?.acceptanceExpiryDate) {
+      refreshQuote();
     }
-
-    const tick = () => {
-      const timeLeft = transaction.acceptanceExpiryDate! - Date.now();
-      if (timeLeft <= 0) {
-        setNow(Number(transaction.acceptanceExpiryDate));
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        refreshQuote();
-      } else {
-        setNow(Date.now());
-      }
-    };
-
-    intervalRef.current = setInterval(tick, 1000);
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [transaction?.acceptanceExpiryDate, isLoading]);
+  }, [isExpired, transaction?.acceptanceExpiryDate, refreshQuote]);
 
   function generateAmountDue() {
     if (isLoading || !transaction) {
-      return <Loader2 className='text-bvnk-primary animate-spin' />;
+      return <Loader2 className='text-bvnk-primary animate-spin' size={18} />;
     }
 
     return (
       <Typography size='sm' weight='medium'>
-        {transaction.paidCurrency.amount} {transaction.paidCurrency.currency}
+        {transaction?.paidCurrency?.amount}{' '}
+        {transaction?.paidCurrency?.currency}
       </Typography>
     );
   }
 
   function generateTimeUntilExpiry() {
     if (isLoading || !transaction?.acceptanceExpiryDate) {
-      return <Loader2 className='text-bvnk-primary animate-spin' />;
+      return <Loader2 className='text-bvnk-primary animate-spin' size={18} />;
     }
-
-    const timeUntilExpiry = transaction.acceptanceExpiryDate - now;
-    const hours = Math.floor(timeUntilExpiry / (1000 * 60 * 60));
-    const minutes = Math.floor(
-      (timeUntilExpiry % (1000 * 60 * 60)) / (1000 * 60),
-    );
-    const seconds = Math.floor((timeUntilExpiry % (1000 * 60)) / 1000);
-    const formattedTimeUntilExpiry = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
     return (
       <Typography size='sm' weight='regular' className='text-grays-text'>
@@ -94,6 +73,9 @@ export function QuoteOfferingComponent({
         {generateTimeUntilExpiry()}
       </div>
       <hr className='border-grays-line-gray my-2 w-full' />
+      <Button onClick={confirmQuote} disabled={isLoading}>
+        Confirm
+      </Button>
     </div>
   );
 }
