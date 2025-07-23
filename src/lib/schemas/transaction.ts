@@ -40,7 +40,6 @@ export type TransactionCurrency = InferType<typeof TransactionCurrencySchema>;
 
 export const UpdateTransactionSummaryRequestSchema = object({
   currency: string().required(),
-  payInMethod: PayInMethodSchema.required(),
 });
 export type UpdateTransactionSummaryRequest = InferType<
   typeof UpdateTransactionSummaryRequestSchema

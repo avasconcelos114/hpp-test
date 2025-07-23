@@ -12,7 +12,7 @@ type Props = {
 export function ErrorCard({ title, description }: Props) {
   const formattedDescription = useMemo(
     () =>
-      description.split('\\n').map((line, index) => (
+      description?.split('\\n').map((line, index) => (
         <React.Fragment key={index}>
           {line}
           <br />

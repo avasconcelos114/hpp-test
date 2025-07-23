@@ -60,3 +60,4 @@ yarn docker:run
 ## Suggestions
 
 - The [Timers](https://github.com/BVNK-Interviews/frontend-hpp-test?tab=readme-ov-file#timers) section in the README file that contains the instructions could benefit from having its endpoint corrected to `PUT https://api.sandbox.bvnk.com/api/v1/pay/<UUID>/update/summary`, since the `PUT https://api.sandbox.bvnk.com/api/v1/pay/<UUID>/summary` endpoint seems to result in an internal server error and is nowhere to be found in the API documentation (but then again, it _could_ stay as a part of the test to push us to find and study the API docs)
+  - On a similar note, it seems as though the `payInMethod` value is no longer required as part of the payload and could be removed from the README

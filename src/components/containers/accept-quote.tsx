@@ -72,10 +72,6 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
 
     updateTransactionSummary({
       currency: selectedPaymentMethod,
-      // META: This is hard-coded since the test only deals with crypto
-      // But normally we would have a dictionary or API endpoint that displays all viable choices
-      // and what their payInMethod is
-      payInMethod: 'crypto',
     });
   }, [selectedPaymentMethod, updateTransactionSummary]);
 
@@ -141,10 +137,6 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
 
     updateTransactionSummary({
       currency: paymentMethod,
-      // META: This is hard-coded since the test only deals with crypto
-      // But normally we would have a dictionary or API endpoint that displays all viable choices
-      // and what their payInMethod is
-      payInMethod: 'crypto',
     });
   }
 
@@ -204,20 +196,21 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
         </div>
 
         {hasSelectedPayment && (
-          <QuoteOfferingComponent
-            transaction={updatedTransaction}
-            refreshQuote={refreshQuote}
-            isLoading={isUpdatePending || isConfirmPending}
-          />
+          <>
+            <QuoteOfferingComponent
+              transaction={updatedTransaction}
+              refreshQuote={refreshQuote}
+              isLoading={isUpdatePending || isConfirmPending}
+            />
+            <Button
+              onClick={handleConfirmQuote}
+              disabled={isUpdatePending || isConfirmPending}
+              className='w-full'
+            >
+              Confirm
+            </Button>
+          </>
         )}
-
-        <Button
-          onClick={handleConfirmQuote}
-          disabled={isUpdatePending || isConfirmPending}
-          className='w-full'
-        >
-          Confirm
-        </Button>
       </div>
     </Card>
   );
