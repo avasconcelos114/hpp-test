@@ -1,19 +1,21 @@
 'use client';
-import QRCode from 'react-qr-code';
+import { useEffect, useState } from 'react';
 import { redirect } from 'next/navigation';
+import QRCode from 'react-qr-code';
 
 import { ErrorCard } from '@/components/containers/error-card';
 import { Card } from '@/components/ui/card';
 import { Typography } from '@/components/ui/typography';
+import { CopyButton } from '@/components/copy-button';
+import { HorizontalDivisor } from '@/components/ui/horizontal-divisor';
 import { useTransactionSummary } from '@/lib/queries';
 import { SUPPORTED_CURRENCIES_MAP } from '@/lib/constants';
 import { shortenAddress } from '@/lib/utils';
 import { useTimer } from '@/hooks/useTimer';
-import { CopyButton } from '../copy-button';
 
 export function PayQuoteComponent({ uuid }: { uuid: string }) {
   const { data: transaction } = useTransactionSummary(uuid);
-  console.log(transaction);
+  const [isMounted, setIsMounted] = useState(false);
   const { formattedTimeUntilExpiry, isExpired } = useTimer(
     transaction?.expiryDate ?? null,
   );
@@ -21,6 +23,10 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
   if (isExpired) {
     redirect(`/payin/${uuid}/expired`);
   }
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // The user connected directly without accepting a quote they will see an error
   if (!transaction || transaction?.quoteStatus !== 'ACCEPTED') {
@@ -60,6 +66,8 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
   }
 
   function generateTimeLeftToPay() {
+    if (!isMounted) return null;
+
     return (
       <Typography size='sm' weight='medium'>
         {formattedTimeUntilExpiry}
@@ -88,23 +96,23 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
           </Typography>
         </div>
       )}
-      <div className='flex w-full flex-col gap-2'>
-        <hr className='border-grays-line-gray my-2 w-full' />
-        <div className='flex flex-row items-center justify-between'>
+      <div className='flex w-full flex-col'>
+        <HorizontalDivisor />
+        <div className='flex flex-row items-center justify-between py-[12px]'>
           <Typography size='sm' weight='regular' className='text-grays-text'>
             Amount due
           </Typography>
           {generateAmountDue()}
         </div>
-        <hr className='border-grays-line-gray my-2 w-full' />
-        <div className='flex flex-row items-center justify-between'>
+        <HorizontalDivisor />
+        <div className='flex flex-row items-center justify-between py-[12px]'>
           <Typography size='sm' weight='regular' className='text-grays-text'>
             {transaction?.paidCurrency?.currency} address
           </Typography>
           {generateAddress()}
         </div>
         {transaction?.address?.address && (
-          <div className='flex flex-col items-center justify-between gap-4 pt-[12px]'>
+          <div className='flex flex-col items-center justify-between gap-[12px] py-[12px]'>
             <QRCode value={transaction?.address?.uri ?? ''} size={140} />
             <Typography
               size='xs'
@@ -115,14 +123,14 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
             </Typography>
           </div>
         )}
-        <hr className='border-grays-line-gray my-2 w-full' />
-        <div className='flex flex-row items-center justify-between'>
+        <HorizontalDivisor />
+        <div className='flex flex-row items-center justify-between py-[12px]'>
           <Typography size='sm' weight='regular' className='text-grays-text'>
             Time left to pay
           </Typography>
           {generateTimeLeftToPay()}
         </div>
-        <hr className='border-grays-line-gray my-2 w-full' />
+        <HorizontalDivisor />
       </div>
     </Card>
   );

@@ -18,12 +18,12 @@ export function CopyButton({ text }: { text: string }) {
       }, COPY_RESET_TIME);
     }
   }, [isCopied]);
+
   return (
     <Button
       variant='ghost'
-      size='sm'
       onClick={handleCopy}
-      className='text-bvnk-primary p-0'
+      className='text-bvnk-primary h-[22px] p-0'
     >
       {isCopied ? 'Copied!' : 'Copy'}
     </Button>

@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useState, useRef } from 'react';
 
 import { REFRESH_QUOTE_INTERVAL } from '@/lib/constants';

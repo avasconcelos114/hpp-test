@@ -18,6 +18,7 @@ import {
 } from '@/lib/schemas/transaction';
 import { AxiosError } from 'axios';
 import { SupportedCurrencies } from '@/lib/schemas/pages';
+import { Button } from '../ui/button';
 
 export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
   const [transaction, setTransaction] = useState<TransactionSummary | null>(
@@ -202,6 +203,14 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
             isLoading={isUpdatePending || isConfirmPending}
           />
         )}
+
+        <Button
+          onClick={handleConfirmQuote}
+          disabled={isUpdatePending || isConfirmPending}
+          className='w-full'
+        >
+          Confirm
+        </Button>
       </div>
     </Card>
   );

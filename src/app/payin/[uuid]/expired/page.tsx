@@ -9,7 +9,10 @@ export default function ExpiredQuotePage() {
   const { data: transaction } = useTransactionSummary(uuid as string);
 
   // Return user to main flow if the transaction is not actually expired
-  if (transaction?.status !== 'EXPIRED') {
+  if (
+    transaction?.expiryDate &&
+    new Date(transaction.expiryDate) > new Date()
+  ) {
     redirect(`/payin/${uuid}`);
   }
 
