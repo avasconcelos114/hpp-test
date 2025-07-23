@@ -5,6 +5,9 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
+import { SupportedCurrencies } from '@/lib/schemas/currencies';
+import { useEffect } from 'react';
+import { useCurrenciesStore } from '@/store/currencies';
 
 function makeQueryClient() {
   return new QueryClient({
@@ -27,8 +30,19 @@ function getQueryClient() {
   }
 }
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({
+  children,
+  currencies,
+}: {
+  children: React.ReactNode;
+  currencies: SupportedCurrencies;
+}) {
   const queryClient = getQueryClient();
+  const { setSupportedCurrencies } = useCurrenciesStore();
+
+  useEffect(() => {
+    setSupportedCurrencies(currencies);
+  }, [currencies]);
 
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

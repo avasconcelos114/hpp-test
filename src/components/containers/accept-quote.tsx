@@ -1,31 +1,33 @@
 'use client';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { redirect } from 'next/navigation';
+import { AxiosError } from 'axios';
+
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ErrorCard } from '@/components/containers/error-card';
+import { Select, SelectOption } from '@/components/ui/select';
 import { Typography } from '@/components/ui/typography';
+import { QuoteOfferingComponent } from '@/components/containers/quote-offering';
 import {
   useTransactionSummary,
   useUpdateTransactionSummary,
   useConfirmQuote,
 } from '@/lib/queries';
-import { Select } from '@/components/ui/select';
-import { QuoteOfferingComponent } from './quote-offering';
-import { API_ERROR_MESSAGES, SUPPORTED_CURRENCIES_MAP } from '@/lib/constants';
+import { API_ERROR_MESSAGES } from '@/lib/constants';
 import {
   TransactionError,
   TransactionSummary,
 } from '@/lib/schemas/transaction';
-import { AxiosError } from 'axios';
-import { SupportedCurrencies } from '@/lib/schemas/pages';
-import { Button } from '../ui/button';
+
+import { useCurrenciesStore } from '@/store/currencies';
 
 export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
   const [transaction, setTransaction] = useState<TransactionSummary | null>(
     null,
   );
   const [error, setError] = useState<TransactionError | null>(null);
-
+  const { supportedCurrencies } = useCurrenciesStore();
   const { data: initialTransaction, error: initialError } =
     useTransactionSummary(uuid);
   const {
@@ -43,24 +45,21 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>('none');
 
-  const paymentOptions: {
-    value: SupportedCurrencies | 'none';
-    label: string;
-  }[] = [
-    { value: 'none', label: 'Select currency' },
-    {
-      value: 'BTC',
-      label: SUPPORTED_CURRENCIES_MAP['BTC'],
-    },
-    {
-      value: 'ETH',
-      label: SUPPORTED_CURRENCIES_MAP['ETH'],
-    },
-    {
-      value: 'LTC',
-      label: SUPPORTED_CURRENCIES_MAP['LTC'],
-    },
-  ];
+  const paymentOptions: SelectOption[] = useMemo(() => {
+    const currencyOptions = transaction?.currencyOptions;
+
+    if (!currencyOptions) return [];
+
+    const options = currencyOptions.map((currency) => {
+      const currencyName = supportedCurrencies?.find(
+        (c) => c.code === currency.code,
+      )?.name;
+
+      return { value: currency.code, label: currencyName || currency.code };
+    });
+
+    return [{ value: 'none', label: 'Select currency' }, ...options];
+  }, [transaction, supportedCurrencies]);
 
   const hasSelectedPayment = useMemo(
     () => selectedPaymentMethod !== 'none',
@@ -71,17 +70,23 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
     if (selectedPaymentMethod === 'none') return;
 
     updateTransactionSummary({
-      currency: selectedPaymentMethod as SupportedCurrencies,
-      // This is hard-coded since the test only deals with crypto
+      currency: selectedPaymentMethod,
+      // META: This is hard-coded since the test only deals with crypto
       // But normally we would have a dictionary or API endpoint that displays all viable choices
       // and what their payInMethod is
       payInMethod: 'crypto',
     });
   }, [selectedPaymentMethod, updateTransactionSummary]);
 
-  console.log(initialTransaction);
   useEffect(() => {
-    const baseTransaction = updatedTransaction || initialTransaction;
+    let baseTransaction = initialTransaction;
+
+    if (updatedTransaction) {
+      baseTransaction = {
+        ...updatedTransaction,
+        currencyOptions: initialTransaction?.currencyOptions,
+      };
+    }
 
     if (baseTransaction) {
       setTransaction(baseTransaction);
@@ -89,19 +94,19 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
   }, [initialTransaction, updatedTransaction]);
 
   useEffect(() => {
+    if (initialTransaction?.status === 'EXPIRED') {
+      redirect(`/payin/${uuid}/expired`);
+    }
+
+    if (initialTransaction?.quoteStatus === 'ACCEPTED') {
+      redirect(`/payin/${uuid}/pay`);
+    }
+
     if (initialTransaction?.paidCurrency?.currency) {
       // Auto select the payment method if it's already been set in another session
       handleSelectPaymentMethod(initialTransaction.paidCurrency?.currency);
     }
   }, [initialTransaction]);
-
-  if (transaction?.status === 'EXPIRED') {
-    redirect(`/payin/${uuid}/expired`);
-  }
-
-  if (transaction?.quoteStatus === 'ACCEPTED') {
-    redirect(`/payin/${uuid}/pay`);
-  }
 
   useEffect(() => {
     if (isConfirmSuccess) {
@@ -132,8 +137,8 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
     if (paymentMethod === 'none') return;
 
     updateTransactionSummary({
-      currency: paymentMethod as SupportedCurrencies,
-      // This is hard-coded since the test only deals with crypto
+      currency: paymentMethod,
+      // META: This is hard-coded since the test only deals with crypto
       // But normally we would have a dictionary or API endpoint that displays all viable choices
       // and what their payInMethod is
       payInMethod: 'crypto',
@@ -199,7 +204,6 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
           <QuoteOfferingComponent
             transaction={updatedTransaction}
             refreshQuote={refreshQuote}
-            confirmQuote={handleConfirmQuote}
             isLoading={isUpdatePending || isConfirmPending}
           />
         )}

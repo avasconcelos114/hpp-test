@@ -4,9 +4,24 @@ import {
   UpdateTransactionSummaryRequest,
   TransactionSummary,
   TransactionSummarySchema,
-  TransactionError,
   TransactionErrorSchema,
 } from '@/lib/schemas/transaction';
+import {
+  SupportedCurrenciesSchema,
+  SupportedCurrencies,
+} from '@/lib/schemas/currencies';
+
+/**
+ * Get the list of cryptocurrencies that are supported by the API
+ * @returns [SupportedCurrencies] - The list of supported cryptocurrencies
+ */
+export const getSupportedCurrencies =
+  async (): Promise<SupportedCurrencies> => {
+    // META: Calling with max=100 as the API only has 54 currencies
+    const response = await axiosInstance.get('/api/currency/crypto?max=100');
+    const currencies = await SupportedCurrenciesSchema.validate(response.data);
+    return currencies;
+  };
 
 /**
  * Get the transaction summary for a given UUID, this is the start point of each transaction

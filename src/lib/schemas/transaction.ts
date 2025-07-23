@@ -1,9 +1,8 @@
 import { object, string, number, InferType, array, boolean } from 'yup';
-import { supportedCurrenciesSchema } from './pages';
 
 export const PayInMethodSchema = string().oneOf([
   'crypto',
-  'bank', // Sample of alternative value but we will work with only 'crypto' for the test
+  'bank', // META: Sample of alternative value but we will work with only 'crypto' for the test
 ]);
 export type PayInMethod = InferType<typeof PayInMethodSchema>;
 
@@ -28,7 +27,7 @@ export const TransactionTypeSchema = string().oneOf(['IN', 'OUT']);
 
 export const TransactionSubTypeSchema = string().oneOf([
   'merchantPayIn',
-  'merchantPayOut', // Educated guess based on other subType but I would confirm with other devs what values exist
+  'merchantPayOut', // META: Educated guess based on other subType but I would confirm with other devs what values exist
 ]);
 export type TransactionSubType = InferType<typeof TransactionSubTypeSchema>;
 
@@ -40,7 +39,7 @@ export const TransactionCurrencySchema = object({
 export type TransactionCurrency = InferType<typeof TransactionCurrencySchema>;
 
 export const UpdateTransactionSummaryRequestSchema = object({
-  currency: supportedCurrenciesSchema.required(),
+  currency: string().required(),
   payInMethod: PayInMethodSchema.required(),
 });
 export type UpdateTransactionSummaryRequest = InferType<
@@ -89,11 +88,7 @@ export const TransactionSummarySchema = object({
   status: TransactionStatusSchema.required(),
   displayCurrency: TransactionCurrencySchema.required(),
   walletCurrency: TransactionCurrencySchema.required(),
-  paidCurrency: object({
-    currency: supportedCurrenciesSchema.nullable(),
-    amount: number().required(),
-    actual: number().required(),
-  }).nullable(),
+  paidCurrency: TransactionCurrencySchema.nullable(),
   feeCurrency: TransactionCurrencySchema.required(),
   networkFeeCurrency: TransactionCurrencySchema.required(),
   displayRate: ExchangeRateSchema.nullable(),

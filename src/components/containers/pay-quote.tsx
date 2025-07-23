@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { redirect } from 'next/navigation';
 import QRCode from 'react-qr-code';
 
@@ -9,12 +9,13 @@ import { Typography } from '@/components/ui/typography';
 import { CopyButton } from '@/components/copy-button';
 import { HorizontalDivisor } from '@/components/ui/horizontal-divisor';
 import { useTransactionSummary } from '@/lib/queries';
-import { SUPPORTED_CURRENCIES_MAP } from '@/lib/constants';
 import { shortenAddress } from '@/lib/utils';
 import { useTimer } from '@/hooks/useTimer';
+import { useCurrenciesStore } from '@/store/currencies';
 
 export function PayQuoteComponent({ uuid }: { uuid: string }) {
   const { data: transaction } = useTransactionSummary(uuid);
+  const { supportedCurrencies } = useCurrenciesStore();
   const [isMounted, setIsMounted] = useState(false);
   const { formattedTimeUntilExpiry, isExpired } = useTimer(
     transaction?.expiryDate ?? null,
@@ -27,6 +28,12 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const currencyName = useMemo(() => {
+    return supportedCurrencies?.find(
+      (c) => c.code === transaction?.paidCurrency?.currency,
+    )?.name;
+  }, [transaction, supportedCurrencies]);
 
   // The user connected directly without accepting a quote they will see an error
   if (!transaction || transaction?.quoteStatus !== 'ACCEPTED') {
@@ -80,8 +87,7 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
       {transaction?.paidCurrency?.currency && (
         <div className='flex flex-col items-center gap-[25px]'>
           <Typography size='lg' weight='medium'>
-            Pay with{' '}
-            {SUPPORTED_CURRENCIES_MAP[transaction?.paidCurrency?.currency]}
+            Pay with {currencyName}
           </Typography>
 
           <Typography
@@ -90,9 +96,7 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
             className='text-grays-text text-center'
           >
             To complete this payment send the amount
-            <br /> due to the{' '}
-            {SUPPORTED_CURRENCIES_MAP[transaction?.paidCurrency?.currency]}{' '}
-            address provided below.
+            <br /> due to the {currencyName} address provided below.
           </Typography>
         </div>
       )}
