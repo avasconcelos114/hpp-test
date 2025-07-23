@@ -24,7 +24,6 @@ export default async function PayQuotePage({
     redirect(`/payin/${uuid}/invalid`);
   }
 
-  // Prefetching transaction server-side
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: [TRANSACTION_SUMMARY_QUERY_KEY, uuid],

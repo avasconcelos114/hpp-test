@@ -2,6 +2,8 @@
 
 Welcome to my humble repo, this is my take on how I would implement the payment journey described in the [BVNK Interviews page](https://github.com/BVNK-Interviews/frontend-hpp-test). I had a lot of fun working on it and I tried to make the best use of time as possible by adding some _extra_ spices to make the app both accessible and robust :)
 
+Note: Some of the comments in the repo have been prefixed with `META:` to signify that they are pertaining to the test rather than being a general comment regarding a functionality
+
 ## Prerequisites
 
 - Node 20.17.0 (Ideally with an NVM setup)
@@ -44,7 +46,7 @@ yarn docker:run
 - `Shadcn` + `TailwindsCSS`: To simplify component creation and focus the development time on feature completion rather than component structure or styling
 - `Axios` + `React Query`: To streamline the async calls (request headers, interceptors), and allow for easy re-fetching on expiry, as well as showing the loading state when a quote is being refetched
 - `Yup`: Used as a way to quickly be able to validate API responses/values and improve the error handling
-- `Zustand`: Very light-weight state management library to simplify and centralize access to the currencies fetched from the API
+- `Jotai`: Very light-weight state management library to simplify and centralize access to the currencies fetched from the API
 - `Cypress`: As most components in this test are simple by nature, I opted to perform a full panel of E2E testing rather than unit testing auto-generated components that were only mildly customized, to ensure that all required specs have been satisfied
 
 ## Considerations

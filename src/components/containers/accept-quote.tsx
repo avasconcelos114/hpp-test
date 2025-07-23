@@ -20,14 +20,15 @@ import {
   TransactionSummary,
 } from '@/lib/schemas/transaction';
 
-import { useCurrenciesStore } from '@/store/currencies';
+import { useAtom } from 'jotai';
+import { supportedCurrenciesAtom } from '@/store/currencies';
 
 export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
   const [transaction, setTransaction] = useState<TransactionSummary | null>(
     null,
   );
   const [error, setError] = useState<TransactionError | null>(null);
-  const { supportedCurrencies } = useCurrenciesStore();
+  const [supportedCurrencies] = useAtom(supportedCurrenciesAtom);
   const { data: initialTransaction, error: initialError } =
     useTransactionSummary(uuid);
   const {
@@ -123,6 +124,8 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
       // For other error codes, we just change the error message
       setError(updateError);
     } else if (initialError) {
+      // META: This is a workaround to get the error message from the AxiosError
+      // because useQuery doesn't return the error message in the error object like useMutation does
       const axiosError = initialError as AxiosError;
       setError(axiosError.response?.data as unknown as TransactionError);
     }

@@ -7,13 +7,14 @@ import {
 } from '@tanstack/react-query';
 import { SupportedCurrencies } from '@/lib/schemas/currencies';
 import { useEffect } from 'react';
-import { useCurrenciesStore } from '@/store/currencies';
+import { useSetAtom } from 'jotai';
+import { supportedCurrenciesAtom } from '@/store/currencies';
 
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 30 * 1000, // caching for 30 seconds to avoid refetching immediately on the client
+        staleTime: 30 * 1000,
       },
     },
   });
@@ -38,11 +39,11 @@ export default function Providers({
   currencies: SupportedCurrencies;
 }) {
   const queryClient = getQueryClient();
-  const { setSupportedCurrencies } = useCurrenciesStore();
+  const setSupportedCurrencies = useSetAtom(supportedCurrenciesAtom);
 
   useEffect(() => {
     setSupportedCurrencies(currencies);
-  }, [currencies]);
+  }, [currencies, setSupportedCurrencies]);
 
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

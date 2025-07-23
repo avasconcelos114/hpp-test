@@ -11,11 +11,12 @@ import { HorizontalDivisor } from '@/components/ui/horizontal-divisor';
 import { useTransactionSummary } from '@/lib/queries';
 import { shortenAddress } from '@/lib/utils';
 import { useTimer } from '@/hooks/useTimer';
-import { useCurrenciesStore } from '@/store/currencies';
+import { useAtom } from 'jotai';
+import { supportedCurrenciesAtom } from '@/store/currencies';
 
 export function PayQuoteComponent({ uuid }: { uuid: string }) {
   const { data: transaction } = useTransactionSummary(uuid);
-  const { supportedCurrencies } = useCurrenciesStore();
+  const [supportedCurrencies] = useAtom(supportedCurrenciesAtom);
   const [isMounted, setIsMounted] = useState(false);
   const { formattedTimeUntilExpiry, isExpired } = useTimer(
     transaction?.expiryDate ?? null,
