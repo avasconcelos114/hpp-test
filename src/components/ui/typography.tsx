@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { PropsWithChildren, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 export type TypographySize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -17,7 +17,7 @@ export type TypographyTag =
 interface TypographyProps {
   size: TypographySize;
   tag?: TypographyTag;
-  weight?: TypographyWeight;
+  weight: TypographyWeight;
   children?: ReactNode;
   className?: string;
   htmlFor?: string;
@@ -40,14 +40,15 @@ const weightStyles: Record<TypographyWeight, string> = {
 };
 
 export const Typography = ({
-  size = 'md',
+  size,
   tag = 'p',
-  weight = 'regular',
+  weight,
   children,
   className = '',
   htmlFor,
   id,
-}: TypographyProps) => {
+  ...props
+}: PropsWithChildren<TypographyProps>) => {
   const Component = tag;
   const sizeClassName = sizeStyles[size];
   const weightClassName = weightStyles[weight];
@@ -62,6 +63,7 @@ export const Typography = ({
       )}
       htmlFor={htmlFor}
       id={id}
+      {...props}
     >
       {children}
     </Component>

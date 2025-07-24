@@ -12,6 +12,9 @@
 
 # testing
 /coverage
+/cypress/screenshots
+/cypress/videos
+.nyc_output
 
 # next.js
 /.next/

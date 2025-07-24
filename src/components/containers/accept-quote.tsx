@@ -153,7 +153,7 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
     <Card className='w-[460px]'>
       <div className='flex flex-col items-center gap-[25px]'>
         <div className='flex flex-col items-center'>
-          <Typography size='lg' weight='medium'>
+          <Typography size='lg' weight='medium' tag='h2'>
             {transaction?.merchantDisplayName}
           </Typography>
 
@@ -206,6 +206,7 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
               onClick={handleConfirmQuote}
               disabled={isUpdatePending || isConfirmPending}
               className='w-full'
+              data-testid='confirm-quote-button'
             >
               Confirm
             </Button>

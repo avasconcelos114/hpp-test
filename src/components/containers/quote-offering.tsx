@@ -40,7 +40,7 @@ export function QuoteOfferingComponent({
     }
 
     return (
-      <Typography size='sm' weight='medium'>
+      <Typography size='sm' weight='medium' data-testid='amount-due'>
         {transaction?.paidCurrency?.amount}{' '}
         {transaction?.paidCurrency?.currency}
       </Typography>
@@ -53,7 +53,12 @@ export function QuoteOfferingComponent({
     }
 
     return (
-      <Typography size='sm' weight='regular' className='text-grays-text'>
+      <Typography
+        size='sm'
+        weight='regular'
+        className='text-grays-text'
+        data-testid='time-until-expiry'
+      >
         {formattedTimeUntilExpiry}
       </Typography>
     );

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 const COPY_RESET_TIME = 2000;
 
-export function CopyButton({ text }: { text: string }) {
+export function CopyButton({ text, testId }: { text: string; testId: string }) {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = () => {
@@ -24,6 +24,7 @@ export function CopyButton({ text }: { text: string }) {
       variant='ghost'
       onClick={handleCopy}
       className='text-bvnk-primary h-[22px] p-0'
+      data-testid={`copy-button-${testId}`}
     >
       {isCopied ? 'Copied!' : 'Copy'}
     </Button>

@@ -57,6 +57,7 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
         </Typography>
         <CopyButton
           text={transaction?.paidCurrency?.amount?.toString() ?? ''}
+          testId='amount-due'
         />
       </div>
     );
@@ -68,7 +69,10 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
         <Typography size='sm' weight='medium'>
           {shortenAddress(transaction?.address?.address ?? '')}
         </Typography>
-        <CopyButton text={transaction?.address?.address ?? ''} />
+        <CopyButton
+          text={transaction?.address?.address ?? ''}
+          testId='address'
+        />
       </div>
     );
   }

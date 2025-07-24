@@ -12,7 +12,6 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   labelId?: string;
   helperText?: string;
-  error?: boolean;
   containerClassName?: string;
   options: SelectOption[];
 }
@@ -23,7 +22,6 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       label,
       labelId,
       helperText,
-      error,
       className,
       containerClassName,
       id,
@@ -46,7 +44,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             size='md'
             weight='medium'
             tag='label'
-            className={cn('text-sm font-medium', error && 'text-red-600')}
+            className='text-sm font-medium'
           >
             {label}
           </Typography>
@@ -57,11 +55,9 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             ref={ref}
             aria-labelledby={label ? labelHtmlId : undefined}
             aria-describedby={describedBy}
-            aria-invalid={error || undefined}
             className={cn(
               // Hide native arrow, add right padding for icon
               'border-grays-line-gray focus:ring-ring/50 focus:border-ring h-[56px] w-full appearance-none rounded-md border px-3 py-2 pr-10 text-sm focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
-              error && 'border-red-600 focus:border-red-600 focus:ring-red-200',
               className,
             )}
             {...props}
@@ -82,13 +78,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           />
         </div>
         {helperText && (
-          <span
-            id={describedBy}
-            className={cn(
-              'text-muted-foreground text-xs',
-              error && 'text-red-600',
-            )}
-          >
+          <span id={describedBy} className={'text-muted-foreground text-xs'}>
             {helperText}
           </span>
         )}

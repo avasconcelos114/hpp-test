@@ -40,6 +40,26 @@ yarn docker:build
 yarn docker:run
 ```
 
+## Running E2E Tests
+
+0. Run the project in test mode to enable instrumentation
+
+```bash
+NODE_ENV=test yarn dev
+```
+
+1. Run the cypress runner (to run the E2E tests properly, you will need to make an API call to create a payment, and use its uuid value in the env var below, Cypress will work its ✨ magic ✨ from here)
+
+```bash
+yarn cypress:run --env uuid={PASTED_UUID}
+```
+
+2. Check coverage report
+
+```bash
+yarn nyc:report
+```
+
 ## Main Libraries Used
 
 - `Next.js`: I've opted to use Next.js to validate UUIDs server-side when accessing a page and providing an already-populated response to the client (and handle invalid or failed requests)

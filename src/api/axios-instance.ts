@@ -16,7 +16,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    // We would normally add auth tokens and retry logic here
+    // We would normally inject auth tokens and auth refresh logic here
     return config;
   },
   (error) => {

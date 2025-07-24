@@ -5,7 +5,7 @@ export default function HomePage() {
   return (
     <div className='flex h-screen w-screen items-center justify-center'>
       <Card className='w-[460px]'>
-        <Typography size='xl' weight='semibold'>
+        <Typography size='xl' weight='semibold' tag='h1'>
           BVNK Test
         </Typography>
         <Typography size='md' weight='regular' className='text-grays-text'>
