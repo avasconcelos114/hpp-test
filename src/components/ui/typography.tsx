@@ -22,6 +22,9 @@ interface TypographyProps {
   className?: string;
   htmlFor?: string;
   id?: string;
+  role?: string;
+  tabIndex?: number;
+  ariaLabel?: string;
 }
 
 const sizeStyles: Record<TypographySize, string> = {
@@ -47,6 +50,7 @@ export const Typography = ({
   className = '',
   htmlFor,
   id,
+  ariaLabel,
   ...props
 }: PropsWithChildren<TypographyProps>) => {
   const Component = tag;
@@ -63,6 +67,7 @@ export const Typography = ({
       )}
       htmlFor={htmlFor}
       id={id}
+      aria-label={ariaLabel}
       {...props}
     >
       {children}

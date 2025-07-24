@@ -1,9 +1,17 @@
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 
-const COPY_RESET_TIME = 2000;
+const COPY_RESET_TIME = 5000;
 
-export function CopyButton({ text, testId }: { text: string; testId: string }) {
+export function CopyButton({
+  text,
+  testId,
+  ariaLabel,
+}: {
+  text: string;
+  testId: string;
+  ariaLabel: string;
+}) {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = () => {
@@ -25,6 +33,8 @@ export function CopyButton({ text, testId }: { text: string; testId: string }) {
       onClick={handleCopy}
       className='text-bvnk-primary h-[22px] p-0'
       data-testid={`copy-button-${testId}`}
+      aria-label={ariaLabel}
+      aria-pressed={isCopied}
     >
       {isCopied ? 'Copied!' : 'Copy'}
     </Button>

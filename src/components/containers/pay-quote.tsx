@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { redirect } from 'next/navigation';
 import QRCode from 'react-qr-code';
 
@@ -16,6 +16,8 @@ import { supportedCurrenciesAtom } from '@/store/currencies';
 
 export function PayQuoteComponent({ uuid }: { uuid: string }) {
   const { data: transaction } = useTransactionSummary(uuid);
+  const cardRef = useRef<HTMLDivElement>(null);
+
   const [supportedCurrencies] = useAtom(supportedCurrenciesAtom);
   const [isMounted, setIsMounted] = useState(false);
   const { formattedTimeUntilExpiry, isExpired } = useTimer(
@@ -28,12 +30,16 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
 
   useEffect(() => {
     setIsMounted(true);
+    // Focus the card when the component mounts for screen readers and keyboard navigation
+    cardRef.current?.focus();
   }, []);
 
   const currencyName = useMemo(() => {
-    return supportedCurrencies?.find(
-      (c) => c.code === transaction?.paidCurrency?.currency,
-    )?.name;
+    return (
+      supportedCurrencies?.find(
+        (c) => c.code === transaction?.paidCurrency?.currency,
+      )?.name || transaction?.paidCurrency?.currency
+    );
   }, [transaction, supportedCurrencies]);
 
   // The user connected directly without accepting a quote they will see an error
@@ -51,13 +57,19 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
   function generateAmountDue() {
     return (
       <div className='flex flex-row items-center gap-4'>
-        <Typography size='sm' weight='medium'>
+        <Typography
+          size='sm'
+          weight='medium'
+          aria-hidden='true'
+          role='presentation'
+        >
           {transaction?.paidCurrency?.amount}{' '}
           {transaction?.paidCurrency?.currency}
         </Typography>
         <CopyButton
           text={transaction?.paidCurrency?.amount?.toString() ?? ''}
           testId='amount-due'
+          ariaLabel={`Copy amount due to clipboard`}
         />
       </div>
     );
@@ -66,32 +78,59 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
   function generateAddress() {
     return (
       <div className='flex flex-row items-center gap-4'>
-        <Typography size='sm' weight='medium'>
+        <Typography
+          size='sm'
+          weight='medium'
+          aria-hidden='true'
+          role='presentation'
+        >
           {shortenAddress(transaction?.address?.address ?? '')}
         </Typography>
         <CopyButton
           text={transaction?.address?.address ?? ''}
           testId='address'
+          ariaLabel={`Copy ${transaction?.paidCurrency?.currency} address to clipboard`}
         />
       </div>
     );
   }
 
   function generateTimeLeftToPay() {
-    if (!isMounted) return null;
-
     return (
-      <Typography size='sm' weight='medium'>
+      <Typography
+        size='sm'
+        weight='medium'
+        aria-hidden='true'
+        role='presentation'
+      >
         {formattedTimeUntilExpiry}
       </Typography>
     );
   }
 
+  if (!isMounted) return null;
+
   return (
-    <Card className='w-[460px]'>
+    <Card
+      ref={cardRef}
+      className='w-[460px]'
+      role='group'
+      tabIndex={0}
+      aria-label='Pay quote'
+    >
       {transaction?.paidCurrency?.currency && (
-        <div className='flex flex-col items-center gap-[25px]'>
-          <Typography size='lg' weight='medium'>
+        <div
+          className='flex flex-col items-center gap-[25px]'
+          role='group'
+          tabIndex={0}
+          aria-label={`Pay with ${currencyName}`}
+        >
+          <Typography
+            size='lg'
+            weight='medium'
+            aria-hidden='true'
+            role='presentation'
+          >
             Pay with {currencyName}
           </Typography>
 
@@ -107,26 +146,54 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
       )}
       <div className='flex w-full flex-col'>
         <HorizontalDivisor />
-        <div className='flex flex-row items-center justify-between py-[12px]'>
-          <Typography size='sm' weight='regular' className='text-grays-text'>
+        <div
+          className='flex flex-row items-center justify-between py-[12px]'
+          role='group'
+          tabIndex={0}
+          aria-label={`Amount due: ${transaction?.paidCurrency?.amount} ${transaction?.paidCurrency?.currency}`}
+        >
+          <Typography
+            size='sm'
+            weight='regular'
+            className='text-grays-text'
+            aria-hidden='true'
+            role='presentation'
+          >
             Amount due
           </Typography>
           {generateAmountDue()}
         </div>
         <HorizontalDivisor />
-        <div className='flex flex-row items-center justify-between py-[12px]'>
-          <Typography size='sm' weight='regular' className='text-grays-text'>
+        <div
+          className='flex flex-row items-center justify-between py-[12px]'
+          role='group'
+          tabIndex={0}
+          aria-label={`${transaction?.paidCurrency?.currency} address`}
+        >
+          <Typography
+            size='sm'
+            weight='regular'
+            className='text-grays-text'
+            aria-hidden='true'
+            role='presentation'
+          >
             {transaction?.paidCurrency?.currency} address
           </Typography>
           {generateAddress()}
         </div>
         {transaction?.address?.address && (
           <div className='flex flex-col items-center justify-between gap-[12px] py-[12px]'>
-            <QRCode value={transaction?.address?.uri ?? ''} size={140} />
+            <QRCode
+              value={transaction?.address?.uri ?? ''}
+              size={140}
+              aria-label={`Scan this QR code to pay with ${transaction?.paidCurrency?.currency}`}
+            />
             <Typography
               size='xs'
               weight='regular'
               className='text-grays-text text-center'
+              aria-hidden='true'
+              role='presentation'
             >
               {transaction?.address?.address}
             </Typography>
@@ -134,7 +201,13 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
         )}
         <HorizontalDivisor />
         <div className='flex flex-row items-center justify-between py-[12px]'>
-          <Typography size='sm' weight='regular' className='text-grays-text'>
+          <Typography
+            size='sm'
+            weight='regular'
+            className='text-grays-text'
+            tabIndex={0}
+            aria-label={`Time left to pay: ${formattedTimeUntilExpiry}`}
+          >
             Time left to pay
           </Typography>
           {generateTimeLeftToPay()}

@@ -153,34 +153,60 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
     <Card className='w-[460px]'>
       <div className='flex flex-col items-center gap-[25px]'>
         <div className='flex flex-col items-center'>
-          <Typography size='lg' weight='medium' tag='h2'>
+          <Typography
+            size='lg'
+            weight='medium'
+            tag='h2'
+            tabIndex={0}
+            ariaLabel={`Transaction details for merchant: ${transaction?.merchantDisplayName}`}
+          >
             {transaction?.merchantDisplayName}
           </Typography>
 
           <div className='flex flex-row items-end gap-2'>
-            <Typography size='xl' weight='semibold'>
+            <Typography
+              size='xl'
+              weight='semibold'
+              tabIndex={0}
+              ariaLabel={`Transaction amount: ${transaction?.displayCurrency.amount} ${transaction?.displayCurrency.currency}`}
+            >
               {transaction?.displayCurrency.amount}
             </Typography>
             <Typography
               size='lg'
               weight='semibold'
               className='relative -top-[2px]'
+              aria-hidden='true'
+              role='presentation'
             >
               {transaction?.displayCurrency.currency}
             </Typography>
           </div>
         </div>
 
-        <div className='flex flex-row items-center gap-1'>
+        <div
+          className='flex flex-row items-center gap-1'
+          role='group'
+          tabIndex={0}
+          aria-label={`Transaction reference number: ${transaction?.reference}`}
+        >
           <Typography
             size='md'
             weight='regular'
             tag='span'
             className='text-grays-text'
+            aria-hidden='true'
+            role='presentation'
           >
             For reference number:
           </Typography>
-          <Typography size='md' weight='medium' tag='span'>
+          <Typography
+            size='md'
+            weight='medium'
+            tag='span'
+            aria-hidden='true'
+            role='presentation'
+          >
             {transaction?.reference}
           </Typography>
         </div>
@@ -192,6 +218,7 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
             label='Pay with'
             onChange={(e) => handleSelectPaymentMethod(e.target.value)}
             options={paymentOptions}
+            ariaLabel={`Select payment method`}
           />
         </div>
 

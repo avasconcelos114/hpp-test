@@ -14,6 +14,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   helperText?: string;
   containerClassName?: string;
   options: SelectOption[];
+  ariaLabel?: string;
 }
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
@@ -26,6 +27,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       containerClassName,
       id,
       options,
+      ariaLabel,
       ...props
     },
     ref,
@@ -45,6 +47,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             weight='medium'
             tag='label'
             className='text-sm font-medium'
+            ariaLabel={ariaLabel}
           >
             {label}
           </Typography>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
 import { Typography } from '@/components/ui/typography';
@@ -67,14 +67,24 @@ export function QuoteOfferingComponent({
   return (
     <div className='flex w-full flex-col'>
       <HorizontalDivisor />
-      <div className='flex flex-row items-center justify-between py-[12px]'>
+      <div
+        className='flex flex-row items-center justify-between py-[12px]'
+        role='group'
+        tabIndex={0}
+        aria-label={`Amount due: ${transaction?.paidCurrency?.amount} ${transaction?.paidCurrency?.currency}`}
+      >
         <Typography size='sm' weight='regular' className='text-grays-text'>
           Amount due
         </Typography>
         {generateAmountDue()}
       </div>
       <HorizontalDivisor />
-      <div className='flex flex-row items-center justify-between py-[12px]'>
+      <div
+        className='flex flex-row items-center justify-between py-[12px]'
+        role='group'
+        tabIndex={0}
+        aria-label={`Quoted price expires in: ${formattedTimeUntilExpiry}`}
+      >
         <Typography size='sm' weight='regular' className='text-grays-text'>
           Quoted price expires in
         </Typography>

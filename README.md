@@ -73,7 +73,7 @@ yarn nyc:report
 
 - While not originally a part of the specs, I've added more robust forms of error handling that expand beyond the expired page, which accounts for invalid UUIDs in the URL, as well as a few of the error codes present in the https://docs.bvnk.com/reference/errors documentation
 
-- As a personal challenge, I tried to make all pages and components screen-reader compatible (tested with NVDA) and keyboard navigatable
+- As a personal challenge, I tried to make all pages and components screen-reader compatible (tested with VoiceOver on MacOS) and keyboard navigatable
 
 - I tried to keep fidelity to the style names in Figma as much as possible, but they turned out a bit strange when getting "translated" to TailwindsCSS-compatible names, in this scenario I would collaborate with designers to get a good naming convention that is clear and works well both for developers _and_ designers
 

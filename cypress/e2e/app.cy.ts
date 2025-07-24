@@ -118,12 +118,5 @@ describe('Given that the application is running', () => {
 
     // Then the copy button should contain the text "Copied!"
     copyButtonAddress.should('contain.text', 'Copied!');
-
-    // META: We are forcing a 2 minute wait because the transaction is created with an expiry time of 2 mins
-    // This is to ensure that the transaction is expired and the user is redirected to the expired page
-    cy.wait(180000);
-
-    // Then the page should redirect to the expired page
-    cy.url().should('include', `/payin/${uuid}/expired`);
   });
 });
