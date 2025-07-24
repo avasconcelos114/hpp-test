@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Typography > should render the typography 1`] = `
+<p
+  class="text-grays-not-quite-black m-0 text-[14px] leading-[22px] font-normal"
+>
+  Typography
+</p>
+`;

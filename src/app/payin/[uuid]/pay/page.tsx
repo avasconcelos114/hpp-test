@@ -8,7 +8,6 @@ import {
 import * as transactionApi from '@/api/transactions';
 import { TRANSACTION_SUMMARY_QUERY_KEY } from '@/lib/queries';
 
-import { Card } from '@/components/ui/card';
 import { PayQuoteComponent } from '@/components/containers/pay-quote';
 import { payInPageSchema } from '@/lib/schemas/pages';
 

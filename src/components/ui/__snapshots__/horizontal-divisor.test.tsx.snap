@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`HorizontalDivisor > should render the horizontal divisor 1`] = `
+<hr
+  aria-hidden="true"
+  class="border-grays-line-gray w-full"
+  data-testid="horizontal-divisor"
+/>
+`;

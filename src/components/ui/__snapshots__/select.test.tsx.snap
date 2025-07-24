@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Select > should render the select 1`] = `
+<select
+  class="border-grays-line-gray focus:ring-ring/50 focus:border-ring h-[56px] w-full appearance-none rounded-md border px-3 py-2 pr-10 text-sm focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+  data-testid="select"
+  id="«r0»"
+/>
+`;

@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Card > should render the card 1`] = `
+<div
+  class="text-card-foreground flex flex-col gap-6 rounded-xl bg-white p-[25px]"
+  data-slot="card"
+  data-testid="card"
+>
+  Card contents
+</div>
+`;
