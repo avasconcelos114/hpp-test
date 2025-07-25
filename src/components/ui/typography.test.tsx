@@ -20,7 +20,7 @@ describe('Typography', () => {
       </Typography>,
     );
     const typography = screen.getByText('Typography');
-    expect(typography.classList).toContain('text-[14px]');
+    expect(typography.classList).toContain('text-sm');
   });
 
   it('should render the typography with the correct weight', () => {

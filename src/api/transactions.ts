@@ -1,5 +1,3 @@
-import { AxiosError } from 'axios';
-
 // API
 import { axiosInstance } from '@/api/axios-instance';
 
@@ -14,6 +12,7 @@ import {
   SupportedCurrencies,
 } from '@/lib/schemas/currencies';
 import { handleAPIError } from '@/lib/utils';
+import { DEFAULT_CURRENCIES } from '@/lib/constants';
 
 /**
  * Get the list of cryptocurrencies that are supported by the API
@@ -22,9 +21,16 @@ import { handleAPIError } from '@/lib/utils';
 export const getSupportedCurrencies =
   async (): Promise<SupportedCurrencies> => {
     // META: Calling with max=100 as the API only has 54 currencies
-    const response = await axiosInstance.get('/api/currency/crypto?max=100');
-    const currencies = await SupportedCurrenciesSchema.validate(response.data);
-    return currencies;
+    try {
+      const response = await axiosInstance.get('/api/currency/crypto?max=100');
+      const currencies = await SupportedCurrenciesSchema.validate(
+        response.data,
+      );
+      return currencies;
+    } catch {
+      // Fallback to default currencies if the API call fails
+      return DEFAULT_CURRENCIES;
+    }
   };
 
 /**

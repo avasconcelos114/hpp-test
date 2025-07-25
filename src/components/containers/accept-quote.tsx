@@ -63,7 +63,7 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
       return { value: currency.code, label: currencyName || currency.code };
     });
 
-    return [{ value: 'none', label: 'Select currency' }, ...options];
+    return [{ value: 'none', label: 'Select Currency' }, ...options];
   }, [transaction, supportedCurrencies]);
 
   const hasSelectedPayment = useMemo(

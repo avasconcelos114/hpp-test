@@ -7,19 +7,19 @@ export const ProtocolSchema = object({
 });
 
 export const SupportedCurrencySchema = object({
-  id: number().required(),
+  id: number(),
   code: string().required(),
-  fiat: boolean().required(),
+  fiat: boolean(),
   icon: string().nullable(),
   name: string().required(),
-  withdrawalParameters: array().required(),
-  options: object().required(),
-  withdrawalFee: number().required(),
-  depositFee: number().required(),
-  supportsDeposits: boolean().required(),
-  supportsWithdrawals: boolean().required(),
-  quantityPrecision: number().required(),
-  pricePrecision: number().required(),
+  withdrawalParameters: array(),
+  options: object(),
+  withdrawalFee: number(),
+  depositFee: number(),
+  supportsDeposits: boolean(),
+  supportsWithdrawals: boolean(),
+  quantityPrecision: number(),
+  pricePrecision: number(),
   protocols: array().of(ProtocolSchema),
 });
 export type SupportedCurrency = InferType<typeof SupportedCurrencySchema>;

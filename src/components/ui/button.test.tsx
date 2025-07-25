@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { Button, buttonVariants } from './button';
+import { Button } from './button';
 
 describe('Button', () => {
   it('should render the button', () => {

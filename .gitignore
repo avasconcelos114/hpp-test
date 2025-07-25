@@ -13,6 +13,7 @@
 
 # testing
 /coverage/*
+/src/coverage
 /cypress/screenshots
 /cypress/videos
 .nyc_output

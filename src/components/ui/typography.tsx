@@ -29,11 +29,11 @@ interface TypographyProps {
 }
 
 const sizeStyles: Record<TypographySize, string> = {
-  xs: 'text-[12px] leading-[16px]',
-  sm: 'text-[14px] leading-[22px]',
-  md: 'text-[15px] leading-[22px]',
-  lg: 'text-[20px] leading-[28px]',
-  xl: 'text-[32px] leading-[40px]',
+  xs: 'text-xs leading-[16px]',
+  sm: 'text-sm leading-[22px]',
+  md: 'text-base leading-[22px]',
+  lg: 'text-lg leading-[28px]',
+  xl: 'text-xl leading-[40px]',
 };
 
 const weightStyles: Record<TypographyWeight, string> = {

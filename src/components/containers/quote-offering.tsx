@@ -30,6 +30,7 @@ export function QuoteOfferingComponent({
   );
 
   useEffect(() => {
+    // Resolving hydration issues related to the timer
     setIsMounted(true);
   }, []);
 
@@ -45,7 +46,7 @@ export function QuoteOfferingComponent({
     }
 
     return (
-      <Typography size='sm' weight='medium' data-testid='amount-due'>
+      <Typography size='sm' weight='medium'>
         {transaction?.paidCurrency?.amount}{' '}
         {transaction?.paidCurrency?.currency}
       </Typography>
@@ -74,6 +75,7 @@ export function QuoteOfferingComponent({
       <HorizontalDivisor />
       <div
         className='flex flex-row items-center justify-between py-[12px]'
+        data-testid='amount-due'
         role='group'
         tabIndex={0}
         aria-label={`Amount due: ${transaction?.paidCurrency?.amount} ${transaction?.paidCurrency?.currency}`}

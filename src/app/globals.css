@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @theme inline {
   --color-background: #EBEDF3;
@@ -15,9 +14,17 @@
    * might want to change its name for clarity + update all the literals #FFFFFF in Figma to this color
    */
   --color-surfaces-cloudy-white: #FFFFFF;
+
+  /* Typography overrides to match Figma design */
+  --text-base: 15px;
+  --text-lg: 20px;
+  --text-xl: 32px;
 }
 
 body {
   background: var(--color-background);
+}
+
+.font-inter {
   font-family: 'Inter', sans-serif;
 }

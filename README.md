@@ -68,7 +68,7 @@ yarn cypress:run --env uuid={PASTED_UUID}
 
 I would have liked to create a cypress task that makes a call to create a payment and injects its UUID on its own, but that would mean having to set up API credentials as the project's env vars so I decided to keep the basics simple
 
-2. Check coverage report
+2. Check converage reports
 
 ```bash
 yarn cypress:coverage
@@ -81,9 +81,8 @@ yarn cypress:coverage
 - `Axios` + `React Query`: To streamline the async calls (request headers, interceptors), and allow for easy re-fetching on expiry, as well as showing the loading state when a quote is being refetched
 - `Yup`: Used as a way to quickly be able to validate API responses/values and improve the error handling
 - `Jotai`: Very light-weight state management library to simplify and centralize access to the currencies fetched from the API
-- `Vitest` + `React Testing Library`: Used to perform unit tests on the utility functions and simpler components (complex flows are covered with Cypress below)
-- `Cypress`: Due to the existance of server-rendered components and the need for making sure that all scenarios and route
-  safeguards work correctly, I have employed Cypress E2E testing to both run these tests and perform code coverage reporting with
+- `Vitest` + `React Testing Library`: Used to perform unit tests on the utility functions and components
+- `Cypress`: Chosen as a way to automate tests with live data from the perspective of the user (Behavior Driven)
 
 ## Considerations
 
