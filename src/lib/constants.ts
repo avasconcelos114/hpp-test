@@ -14,6 +14,8 @@ export const API_ERROR_MESSAGES: Record<TransactionErrorCodes, string> = {
     'The payment you requested has not been found. Please create a new payment and try again.',
   'MER-PAY-2028':
     "We couldn't process your payout request to the desired address, please try another one.",
+  'MER-PAY-4002':
+    'An unexpected error occurred. Please reload the page and try again.',
 };
 
 export const DEFAULT_CURRENCIES: SupportedCurrencies = [

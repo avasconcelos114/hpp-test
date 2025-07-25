@@ -55,12 +55,15 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
 
     if (!currencyOptions) return [];
 
-    const options = currencyOptions.map((currency) => {
+    const options: SelectOption[] = [];
+    currencyOptions.forEach((currency) => {
       const currencyName = supportedCurrencies?.find(
         (c) => c.code === currency.code,
       )?.name;
 
-      return { value: currency.code, label: currencyName || currency.code };
+      if (currencyName) {
+        options.push({ value: currency.code, label: currencyName });
+      }
     });
 
     return [{ value: 'none', label: 'Select Currency' }, ...options];

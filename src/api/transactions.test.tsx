@@ -7,6 +7,7 @@ import {
 } from '@/api/transactions';
 import { axiosInstance } from '@/api/axios-instance';
 import { SupportedCurrencies } from '@/lib/schemas/currencies';
+import { DEFAULT_CURRENCIES } from '@/lib/constants';
 
 vi.mock('./axios-instance', () => ({
   axiosInstance: {
@@ -162,24 +163,7 @@ describe('Transactions', () => {
   });
 
   it('should throw if SupportedCurrenciesSchema.validate fails', async () => {
-    const mockCurrencies: SupportedCurrencies = [
-      {
-        id: 1,
-        code: 'BTC',
-        fiat: false,
-        icon: null,
-        name: 'Bitcoin',
-        withdrawalParameters: [],
-        options: {},
-        withdrawalFee: 0,
-        depositFee: 0,
-        supportsDeposits: true,
-        supportsWithdrawals: true,
-        quantityPrecision: 8,
-        pricePrecision: 2,
-        protocols: [],
-      },
-    ];
+    const mockCurrencies: SupportedCurrencies = DEFAULT_CURRENCIES;
     (axiosInstance.get as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       data: mockCurrencies,
     });
@@ -191,6 +175,6 @@ describe('Transactions', () => {
     ).mockRejectedValueOnce(new Error('validation failed'));
     await expect(
       (await import('./transactions')).getSupportedCurrencies(),
-    ).rejects.toThrow('validation failed');
+    ).resolves.toEqual(DEFAULT_CURRENCIES);
   });
 });

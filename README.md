@@ -12,7 +12,12 @@ Note: Some of the comments in the repo have been prefixed with `META:` to signif
 
 ## Running project locally
 
-0. Run `nvm use` if you're running NVM to auto switch to the right node version (if it's not installed yet, run `nvm install 20.19.0` first)
+0. Run if you're running NVM, switch to the correct version using the commands below:
+
+```bash
+nvm install 20.19.0
+nvm use
+```
 
 1. Install all the needed dependencies
 
@@ -66,7 +71,7 @@ NODE_ENV=test yarn dev
 yarn cypress:run --env uuid={PASTED_UUID}
 ```
 
-I would have liked to create a cypress task that makes a call to create a payment and injects its UUID on its own, but that would mean having to set up API credentials as the project's env vars so I decided to keep the basics simple
+I would have liked to create a cypress task that makes a call to create a payment and injects its UUID on its own, but that would mean having to set up API credentials as the project's env vars so I decided to keep it simple
 
 2. Check converage reports
 
@@ -78,9 +83,9 @@ yarn cypress:coverage
 
 - `Next.js`: I've opted to use Next.js to validate UUIDs server-side when accessing a page and providing an already-populated response to the client (and handle invalid or failed requests)
 - `Shadcn` + `TailwindsCSS`: To simplify component creation and focus the development time on feature completion rather than component structure or styling
-- `Axios` + `React Query`: To streamline the async calls (request headers, interceptors), and allow for easy re-fetching on expiry, as well as showing the loading state when a quote is being refetched
+- `Axios` + `React Query`: To streamline the async calls, and allow for some flexibility when handling the various states of API requests
 - `Yup`: Used as a way to quickly be able to validate API responses/values and improve the error handling
-- `Jotai`: Very light-weight state management library to simplify and centralize access to the currencies fetched from the API
+- `Jotai`: Very light-weight state management library to simplify and centralize access to the currencies fetched from the API (one of the stretch goals)
 - `Vitest` + `React Testing Library`: Used to perform unit tests on the utility functions and components
 - `Cypress`: Chosen as a way to automate tests with live data from the perspective of the user (Behavior Driven)
 

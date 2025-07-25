@@ -110,7 +110,13 @@ export const TransactionSummarySchema = object({
 export type TransactionSummary = InferType<typeof TransactionSummarySchema>;
 
 export const TransactionErrorCodesSchema = string()
-  .oneOf(['MER-PAY-2008', 'MER-PAY-2017', 'MER-PAY-2004', 'MER-PAY-2028'])
+  .oneOf([
+    'MER-PAY-2008',
+    'MER-PAY-2017',
+    'MER-PAY-2004',
+    'MER-PAY-2028',
+    'MER-PAY-4002',
+  ])
   .required();
 export type TransactionErrorCodes = InferType<
   typeof TransactionErrorCodesSchema
