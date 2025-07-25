@@ -1,13 +1,17 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
+
+// API
 import {
   getTransactionSummary,
   updateTransactionSummary,
   confirmQuote,
 } from '@/api/transactions';
-import { useMutation, useQuery } from '@tanstack/react-query';
+
+// Utils
 import {
   TransactionError,
   UpdateTransactionSummaryRequest,
-} from './schemas/transaction';
+} from '@/lib/schemas/transaction';
 
 export const TRANSACTION_SUMMARY_QUERY_KEY = 'transaction-summary';
 

@@ -5,9 +5,14 @@ import {
   QueryClient,
 } from '@tanstack/react-query';
 
+// API
 import * as transactionApi from '@/api/transactions';
-import { payInPageSchema } from '@/lib/schemas/pages';
+
+// Components
 import { AcceptQuoteComponent } from '@/components/containers/accept-quote';
+
+// Utils
+import { payInPageSchema } from '@/lib/schemas/pages';
 import { TRANSACTION_SUMMARY_QUERY_KEY } from '@/lib/queries';
 
 export default async function AcceptQuotePage({

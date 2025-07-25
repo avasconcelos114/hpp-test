@@ -1,7 +1,7 @@
 ########################################################
 # Builder image
 ########################################################
-FROM node:20.17.0-alpine AS builder
+FROM node:20.19.0-alpine AS builder
 
 WORKDIR /app
 

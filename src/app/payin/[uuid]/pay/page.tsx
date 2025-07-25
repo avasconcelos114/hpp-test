@@ -5,10 +5,14 @@ import {
   QueryClient,
 } from '@tanstack/react-query';
 
+// API
 import * as transactionApi from '@/api/transactions';
-import { TRANSACTION_SUMMARY_QUERY_KEY } from '@/lib/queries';
 
+// Components
 import { PayQuoteComponent } from '@/components/containers/pay-quote';
+
+// Utils
+import { TRANSACTION_SUMMARY_QUERY_KEY } from '@/lib/queries';
 import { payInPageSchema } from '@/lib/schemas/pages';
 
 export default async function PayQuotePage({

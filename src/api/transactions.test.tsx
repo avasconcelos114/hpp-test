@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import {
   getTransactionSummary,
   updateTransactionSummary,
   confirmQuote,
-} from './transactions';
-import { axiosInstance } from './axios-instance';
+} from '@/api/transactions';
+import { axiosInstance } from '@/api/axios-instance';
 import { SupportedCurrencies } from '@/lib/schemas/currencies';
 
 vi.mock('./axios-instance', () => ({
@@ -20,7 +21,10 @@ vi.mock('@/lib/schemas/transaction', () => ({
     validate: vi.fn().mockResolvedValue({ id: '123', foo: 'bar' }),
   },
   TransactionErrorSchema: {
-    validate: vi.fn().mockResolvedValue({ code: 'ERR', message: 'error' }),
+    validate: vi.fn().mockResolvedValue({
+      code: 'MER-PAY-2017',
+      message: 'error',
+    }),
   },
 }));
 
@@ -43,18 +47,12 @@ describe('Transactions', () => {
   });
 
   it('should handle error in getTransactionSummary (validation succeeds)', async () => {
-    const error = { code: 'ERR', message: 'fail' };
+    const error = { code: 'MER-PAY-2017', message: 'fail' };
     (axiosInstance.get as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
       error,
     );
-    const { TransactionErrorSchema } = await import(
-      '@/lib/schemas/transaction'
-    );
-    (
-      TransactionErrorSchema.validate as ReturnType<typeof vi.fn>
-    ).mockResolvedValueOnce(error);
     await expect(getTransactionSummary('fail')).rejects.toEqual({
-      code: 'ERR',
+      code: 'MER-PAY-2017',
       message: 'fail',
     });
   });

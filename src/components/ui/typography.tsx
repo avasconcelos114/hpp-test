@@ -1,5 +1,5 @@
-import React from 'react';
-import { PropsWithChildren, ReactNode } from 'react';
+import React, { PropsWithChildren, ReactNode } from 'react';
+
 import { cn } from '@/lib/utils';
 
 export type TypographySize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';

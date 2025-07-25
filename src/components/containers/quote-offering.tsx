@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
+// Components
 import { Typography } from '@/components/ui/typography';
 import { HorizontalDivisor } from '@/components/ui/horizontal-divisor';
+
+// Utils
 import { TransactionSummary } from '@/lib/schemas/transaction';
+
+// Hooks
 import { useTimer } from '@/hooks/useTimer';
 
 type QuoteOfferingComponentProps = {

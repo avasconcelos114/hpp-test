@@ -1,7 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
+
+// Components
 import { Typography } from './typography';
+
+// Utils
+import { cn } from '@/lib/utils';
 
 export type SelectOption = {
   label: string;
@@ -55,6 +59,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         <div className='relative w-full'>
           <select
             id={selectId}
+            data-testid={selectId}
             ref={ref}
             aria-labelledby={label ? labelHtmlId : undefined}
             aria-describedby={describedBy}

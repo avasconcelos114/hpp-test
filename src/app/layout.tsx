@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
-import Providers from './providers';
-import './globals.css';
+
 import { getSupportedCurrencies } from '@/api/transactions';
+import Providers from '@/app/providers';
+
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'BVNK - Test',

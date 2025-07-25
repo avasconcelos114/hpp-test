@@ -8,6 +8,7 @@ Note: Some of the comments in the repo have been prefixed with `META:` to signif
 
 - Node 20.19.0 (Ideally with an NVM setup)
 - Yarn (But NPM is fine too)
+- [Optional] Docker -- only if you're keen on building and running the project with Docker
 
 ## Running project locally
 
@@ -43,6 +44,14 @@ yarn docker:build
 yarn docker:run
 ```
 
+## Running Unit Tests
+
+0. Start the test runner (with coverage reporting)
+
+```bash
+yarn test:coverage
+```
+
 ## Running E2E Tests
 
 0. Run the project in test mode to enable instrumentation (code coverage reporting will not work otherwise)
@@ -62,7 +71,7 @@ I would have liked to create a cypress task that makes a call to create a paymen
 2. Check coverage report
 
 ```bash
-yarn nyc:report
+yarn cypress:coverage
 ```
 
 ## Main Libraries/Tooling Used
@@ -82,11 +91,13 @@ yarn nyc:report
 
 - As a personal challenge, I tried to make all pages screen-reader friendly (tested with VoiceOver on MacOS) and keyboard navigatable
 
+- As an _extra_ bit of challenge, I also used one of the BVNK APIs to fetch the list of cryptocurrencies supported by BVNK, so that you can make full use of the `currencyOptions` part of the response from the crypto summary API
+
 - I tried to keep fidelity to the style names in Figma as much as possible, but they turned out a bit strange when getting "translated" to TailwindsCSS-compatible names, in this scenario I would collaborate with designers to get a good naming convention that is clear and works well both for developers _and_ designers
 
 - We have a cocktail of unit and E2E tests since we want both to have control over individual features of each UI component / utility / hook, but we also want to make sure that the entire flow from the perspective of the user behaves as intended. While neither test suite has achieved 100% coverage, each of them are testing the aspects that the other isn't able to individually (e.g. The unit tests cover the defensive code and error catcher that the E2E env can't reproduce, and the E2E environment makes live API calls and runs schema validations in a way unit tests can't)
 
 ## Suggestions
 
-- The [Timers](https://github.com/BVNK-Interviews/frontend-hpp-test?tab=readme-ov-file#timers) section in the README file that contains the instructions could benefit from having its endpoint corrected to `PUT https://api.sandbox.bvnk.com/api/v1/pay/<UUID>/update/summary`, since the `PUT https://api.sandbox.bvnk.com/api/v1/pay/<UUID>/summary` endpoint seems to result in an internal server error and is nowhere to be found in the API documentation (but then again, it _could_ stay as a part of the test to push us to find and study the API docs)
+- The [Timers](https://github.com/BVNK-Interviews/frontend-hpp-test?tab=readme-ov-file#timers) section in the README file that contains the instructions could benefit from having its endpoint corrected to `PUT https://api.sandbox.bvnk.com/api/v1/pay/<UUID>/update/summary`, since the `PUT https://api.sandbox.bvnk.com/api/v1/pay/<UUID>/summary` endpoint seems to result in an internal server error and is nowhere to be found in the API documentation (but then again, it _could_ stay as a part of the test to push us test takers to find and study the API docs 😉)
   - On a similar note, it seems as though the `payInMethod` value is no longer required as part of the payload and could be removed from the README

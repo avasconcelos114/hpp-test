@@ -1,7 +1,8 @@
 'use client';
+import { redirect, useParams } from 'next/navigation';
+
 import { ErrorCard } from '@/components/containers/error-card';
 import { useTransactionSummary } from '@/lib/queries';
-import { redirect, useParams } from 'next/navigation';
 
 export default function ExpiredQuotePage() {
   const { uuid } = useParams();

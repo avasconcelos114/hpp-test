@@ -5,9 +5,11 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { SupportedCurrencies } from '@/lib/schemas/currencies';
 import { useEffect } from 'react';
 import { useSetAtom } from 'jotai';
+
+// Utils
+import { SupportedCurrencies } from '@/lib/schemas/currencies';
 import { supportedCurrenciesAtom } from '@/store/currencies';
 
 function makeQueryClient() {

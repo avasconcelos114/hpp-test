@@ -1,15 +1,19 @@
 import { AxiosError } from 'axios';
-import { axiosInstance } from './axios-instance';
+
+// API
+import { axiosInstance } from '@/api/axios-instance';
+
+// Utils
 import {
   UpdateTransactionSummaryRequest,
   TransactionSummary,
   TransactionSummarySchema,
-  TransactionErrorSchema,
 } from '@/lib/schemas/transaction';
 import {
   SupportedCurrenciesSchema,
   SupportedCurrencies,
 } from '@/lib/schemas/currencies';
+import { handleAPIError } from '@/lib/utils';
 
 /**
  * Get the list of cryptocurrencies that are supported by the API
@@ -36,16 +40,7 @@ export const getTransactionSummary = async (
     const summary = await TransactionSummarySchema.validate(response.data);
     return summary as TransactionSummary;
   } catch (error) {
-    const errorResponse = error as AxiosError;
-    console.error(errorResponse);
-    try {
-      const errorData = await TransactionErrorSchema.validate(
-        errorResponse.response?.data,
-      );
-      throw errorData;
-    } catch {
-      throw error;
-    }
+    throw await handleAPIError(error);
   }
 };
 
@@ -67,15 +62,7 @@ export const updateTransactionSummary = async (
     const summary = await TransactionSummarySchema.validate(response.data);
     return summary as TransactionSummary;
   } catch (error) {
-    const errorResponse = error as AxiosError;
-    try {
-      const errorData = await TransactionErrorSchema.validate(
-        errorResponse.response?.data,
-      );
-      throw errorData;
-    } catch {
-      throw error;
-    }
+    throw await handleAPIError(error);
   }
 };
 

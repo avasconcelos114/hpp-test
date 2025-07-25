@@ -1,5 +1,12 @@
+import { isAxiosError } from 'axios';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+
+// Utils
+import {
+  TransactionError,
+  TransactionErrorSchema,
+} from '@/lib/schemas/transaction';
 
 /**
  * Merges multiple class values into a single string
@@ -20,4 +27,16 @@ export function shortenAddress(address: string) {
   if (address.length < 10) return address;
 
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
+export async function handleAPIError(
+  error: unknown,
+): Promise<TransactionError | unknown> {
+  if (isAxiosError(error)) {
+    const errorData = await TransactionErrorSchema.validate(
+      error.response?.data,
+    );
+    return errorData;
+  }
+  return error;
 }

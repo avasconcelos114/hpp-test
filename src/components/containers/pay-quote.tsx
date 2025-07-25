@@ -1,17 +1,24 @@
 'use client';
-import { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { redirect } from 'next/navigation';
+import { useAtom } from 'jotai';
 import QRCode from 'react-qr-code';
 
+// Components
 import { ErrorCard } from '@/components/containers/error-card';
 import { Card } from '@/components/ui/card';
 import { Typography } from '@/components/ui/typography';
 import { CopyButton } from '@/components/copy-button';
 import { HorizontalDivisor } from '@/components/ui/horizontal-divisor';
+
+// Utils
 import { useTransactionSummary } from '@/lib/queries';
 import { shortenAddress } from '@/lib/utils';
+
+// Hooks
 import { useTimer } from '@/hooks/useTimer';
-import { useAtom } from 'jotai';
+
+// Store
 import { supportedCurrenciesAtom } from '@/store/currencies';
 
 export function PayQuoteComponent({ uuid }: { uuid: string }) {

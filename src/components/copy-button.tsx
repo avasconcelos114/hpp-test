@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+
 import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
 
 const COPY_RESET_TIME = 5000;
 

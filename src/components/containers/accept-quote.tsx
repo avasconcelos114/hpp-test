@@ -1,14 +1,18 @@
 'use client';
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { redirect } from 'next/navigation';
 import { AxiosError } from 'axios';
+import { useAtom } from 'jotai';
 
+// Components
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ErrorCard } from '@/components/containers/error-card';
 import { Select, SelectOption } from '@/components/ui/select';
 import { Typography } from '@/components/ui/typography';
 import { QuoteOfferingComponent } from '@/components/containers/quote-offering';
+
+// Utils
 import {
   useTransactionSummary,
   useUpdateTransactionSummary,
@@ -20,7 +24,7 @@ import {
   TransactionSummary,
 } from '@/lib/schemas/transaction';
 
-import { useAtom } from 'jotai';
+// Store
 import { supportedCurrenciesAtom } from '@/store/currencies';
 
 export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
