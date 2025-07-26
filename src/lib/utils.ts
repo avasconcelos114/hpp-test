@@ -39,6 +39,19 @@ export async function handleAPIError(
 ): Promise<TransactionError | unknown> {
   if (isAxiosError(error)) {
     try {
+      if (
+        error.response?.data &&
+        Array.isArray(error.response?.data.errorList)
+      ) {
+        // Handling cases where the API returns an array of errors
+        // META: for the purposes of this test, we will be happy to just return the first error
+        const errorData = await TransactionErrorSchema.validate(
+          error.response?.data.errorList[0],
+        );
+        return errorData;
+      }
+
+      // Attempting to handle "standard" API errors
       const errorData = await TransactionErrorSchema.validate(
         error.response?.data,
       );

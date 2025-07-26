@@ -10,7 +10,10 @@ import { Typography } from '@/components/ui/typography';
 import { QuoteOfferingComponent } from '@/components/containers/quote-offering';
 
 // Utils
-import { API_ERROR_MESSAGES } from '@/lib/constants';
+import {
+  ALLOW_REFRESH_QUOTE_ERROR_CODES,
+  API_ERROR_MESSAGES,
+} from '@/lib/constants';
 
 // Hooks
 import { useAcceptQuoteState } from '@/hooks/useAcceptQuoteState';
@@ -60,7 +63,7 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
       <ErrorCard
         title={error.message || 'Error'}
         description={API_ERROR_MESSAGES[error.code]}
-        showRefreshButton
+        showRefreshButton={ALLOW_REFRESH_QUOTE_ERROR_CODES.includes(error.code)}
       />
     );
   }

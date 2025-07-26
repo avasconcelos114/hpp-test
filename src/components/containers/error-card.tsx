@@ -29,7 +29,7 @@ export function ErrorCard({
   );
 
   const ariaLabel = useMemo(
-    () => `${title} - ${description.replaceAll('\\n', ' ')}`,
+    () => `${title} - ${description?.replaceAll('\\n', ' ')}`,
     [title, description],
   );
 

@@ -48,6 +48,7 @@ export function useAcceptQuoteState(uuid: string) {
     mutate: confirmQuote,
     isPending: isConfirmPending,
     isSuccess: isConfirmSuccess,
+    error: confirmError,
   } = useConfirmQuote(uuid);
 
   /*********************************
@@ -104,8 +105,10 @@ export function useAcceptQuoteState(uuid: string) {
       // because useQuery doesn't return the error message in the error object like useMutation does
       const axiosError = initialError as AxiosError;
       setError(axiosError.response?.data as unknown as TransactionError);
+    } else if (confirmError) {
+      setError(confirmError);
     }
-  }, [updateError, initialError, uuid]);
+  }, [updateError, initialError, confirmError, uuid]);
 
   useEffect(() => {
     if (initialTransaction?.status === 'EXPIRED') {

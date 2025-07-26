@@ -78,8 +78,12 @@ export const updateTransactionSummary = async (
  * @returns [boolean] - Whether the quote was confirmed successfully
  */
 export const confirmQuote = async (uuid: string): Promise<boolean> => {
-  const response = await axiosInstance.put(
-    `/api/v1/pay/${uuid}/accept/summary`,
-  );
-  return response.status === 200;
+  try {
+    const response = await axiosInstance.put(
+      `/api/v1/pay/${uuid}/accept/summary`,
+    );
+    return response.status === 200;
+  } catch (error) {
+    throw await handleAPIError(error);
+  }
 };

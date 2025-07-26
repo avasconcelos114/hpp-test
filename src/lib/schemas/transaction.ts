@@ -124,9 +124,9 @@ export type TransactionErrorCodes = InferType<
 
 export const TransactionErrorSchema = object({
   code: TransactionErrorCodesSchema.required(),
-  status: string().required(),
   message: string().required(),
   documentLink: string().nullable(),
-  requestId: string().required(),
+  status: string().nullable(),
+  requestId: string().nullable(),
 });
 export type TransactionError = InferType<typeof TransactionErrorSchema>;

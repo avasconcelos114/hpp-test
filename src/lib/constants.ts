@@ -15,8 +15,12 @@ export const API_ERROR_MESSAGES: Record<TransactionErrorCodes, string> = {
   'MER-PAY-2028':
     "We couldn't process your payout request to the desired address, please try another one.",
   'MER-PAY-4002':
-    'An unexpected error occurred. Please reload the page and try again.',
+    'An unexpected error occurred. Please refresh the page and try again.',
 };
+
+export const ALLOW_REFRESH_QUOTE_ERROR_CODES: TransactionErrorCodes[] = [
+  'MER-PAY-4002',
+];
 
 export const DEFAULT_CURRENCIES: SupportedCurrencies = [
   {
