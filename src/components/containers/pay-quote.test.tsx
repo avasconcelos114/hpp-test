@@ -26,6 +26,9 @@ vi.mock('@/hooks/useTimer', () => ({
     isExpired: false,
   }),
 }));
+vi.mock('@/hooks/useFocusOnNavigation', () => ({
+  useFocusOnNavigation: vi.fn(),
+}));
 
 describe('PayQuoteComponent', () => {
   const mockTransaction = {
@@ -75,6 +78,18 @@ describe('PayQuoteComponent', () => {
     expect(
       screen.getByText(/The transaction you are trying to access is invalid/i),
     ).toBeDefined();
+  });
+
+  it('redirects to accept quote page if transaction is accepted but no quote has been accepted yet', async () => {
+    const { useTransactionSummary } = await import('@/lib/queries');
+    (useTransactionSummary as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: { ...mockTransaction, quoteStatus: 'PENDING' },
+    });
+    const { PayQuoteComponent } = await import(
+      '@/components/containers/pay-quote'
+    );
+    render(<PayQuoteComponent uuid='uuid-123' />);
+    expect(redirect).toHaveBeenCalledWith('/payin/uuid-123');
   });
 
   it('redirects to expired page if timer is expired', async () => {

@@ -94,6 +94,7 @@ yarn cypress:coverage
 - While not originally a part of the specs, I've added more robust forms of error handling that expand beyond the expired page, which accounts for invalid UUIDs in the URL, as well as a few of the error codes present in the https://docs.bvnk.com/reference/errors documentation
 
 - As a personal challenge, I tried to make all pages screen-reader friendly (tested with VoiceOver on MacOS) and keyboard navigatable
+  - If testing the screen reader, please run the project with Docker as the next.js devtool button loves to steal keyboard focus and disrupt the flow of navigation
 
 - As an _extra_ bit of challenge, I also used one of the BVNK APIs to fetch the list of cryptocurrencies supported by BVNK, so that you can make full use of the `currencyOptions` part of the response from the crypto summary API
 

@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
-// We would normally use env vars for this so that multiple environments can be supported
+// META: We would normally use env vars for this so that multiple environments can be supported
 const API_BASE_ORIGIN = 'https://api.sandbox.bvnk.com';
 
 const axiosInstance = axios.create({
@@ -16,7 +16,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    // We would normally inject auth tokens and auth refresh logic here
+    // META: We would normally inject auth tokens and auth refresh logic here
     return config;
   },
   (error) => {
@@ -29,7 +29,7 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    // This is where we would add Sentry error tracking
+    // META: This is where we would add Sentry error tracking
 
     return Promise.reject(error);
   },

@@ -1,7 +1,5 @@
 'use client';
-import React, { useEffect, useState, useMemo, useRef } from 'react';
-import { redirect } from 'next/navigation';
-import { useAtom } from 'jotai';
+import React, { useMemo } from 'react';
 import QRCode from 'react-qr-code';
 
 // Components
@@ -12,34 +10,20 @@ import { CopyButton } from '@/components/copy-button';
 import { HorizontalDivisor } from '@/components/ui/horizontal-divisor';
 
 // Utils
-import { useTransactionSummary } from '@/lib/queries';
 import { shortenAddress } from '@/lib/utils';
 
 // Hooks
-import { useTimer } from '@/hooks/useTimer';
-
-// Store
-import { supportedCurrenciesAtom } from '@/store/currencies';
+import { usePayQuoteState } from '@/hooks/usePayQuoteState';
+import { useFocusOnNavigation } from '@/hooks/useFocusOnNavigation';
 
 export function PayQuoteComponent({ uuid }: { uuid: string }) {
-  const { data: transaction } = useTransactionSummary(uuid);
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const [supportedCurrencies] = useAtom(supportedCurrenciesAtom);
-  const [isMounted, setIsMounted] = useState(false);
-  const { formattedTimeUntilExpiry, isExpired } = useTimer(
-    transaction?.expiryDate ?? null,
-  );
-
-  if (isExpired) {
-    redirect(`/payin/${uuid}/expired`);
-  }
-
-  useEffect(() => {
-    setIsMounted(true);
-    // Focus the card when the component mounts for screen readers and keyboard navigation
-    cardRef.current?.focus();
-  }, []);
+  useFocusOnNavigation();
+  const {
+    isMounted,
+    formattedTimeUntilExpiry,
+    transaction,
+    supportedCurrencies,
+  } = usePayQuoteState(uuid);
 
   const currencyName = useMemo(() => {
     return (
@@ -49,19 +33,7 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
     );
   }, [transaction, supportedCurrencies]);
 
-  // The user connected directly without accepting a quote they will see an error
-  if (!transaction || transaction?.quoteStatus !== 'ACCEPTED') {
-    return (
-      <div className='flex h-screen w-screen items-center justify-center'>
-        <ErrorCard
-          title='Invalid transaction'
-          description='The transaction you are trying to access is invalid.\nPlease create a new one and try again.'
-        />
-      </div>
-    );
-  }
-
-  function generateAmountDue() {
+  const amountDueSection = useMemo(() => {
     return (
       <div className='flex flex-row items-center gap-4'>
         <Typography
@@ -80,9 +52,23 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
         />
       </div>
     );
-  }
+  }, [transaction]);
 
-  function generateAddress() {
+  const timeLeftToPaySection = useMemo(() => {
+    if (!isMounted) return null;
+    return (
+      <Typography
+        size='sm'
+        weight='medium'
+        aria-hidden='true'
+        role='presentation'
+      >
+        {formattedTimeUntilExpiry}
+      </Typography>
+    );
+  }, [formattedTimeUntilExpiry, isMounted]);
+
+  const addressSection = useMemo(() => {
     return (
       <div className='flex flex-row items-center gap-4'>
         <Typography
@@ -100,31 +86,22 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
         />
       </div>
     );
-  }
+  }, [transaction]);
 
-  function generateTimeLeftToPay() {
+  // If the user connected directly without accepting a quote they will see an error
+  if (!transaction) {
     return (
-      <Typography
-        size='sm'
-        weight='medium'
-        aria-hidden='true'
-        role='presentation'
-      >
-        {formattedTimeUntilExpiry}
-      </Typography>
+      <div className='flex h-screen w-screen items-center justify-center'>
+        <ErrorCard
+          title='Invalid transaction'
+          description='The transaction you are trying to access is invalid.\nPlease create a new one and try again.'
+        />
+      </div>
     );
   }
 
-  if (!isMounted) return null;
-
   return (
-    <Card
-      ref={cardRef}
-      className='w-[460px]'
-      role='group'
-      tabIndex={0}
-      aria-label='Pay quote'
-    >
+    <Card className='w-[460px]'>
       {transaction?.paidCurrency?.currency && (
         <div
           className='flex flex-col items-center gap-[25px]'
@@ -168,7 +145,7 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
           >
             Amount due
           </Typography>
-          {generateAmountDue()}
+          {amountDueSection}
         </div>
         <HorizontalDivisor />
         <div
@@ -186,7 +163,7 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
           >
             {transaction?.paidCurrency?.currency} address
           </Typography>
-          {generateAddress()}
+          {addressSection}
         </div>
         {transaction?.address?.address && (
           <div className='flex flex-col items-center justify-between gap-[12px] py-[12px]'>
@@ -207,18 +184,25 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
           </div>
         )}
         <HorizontalDivisor />
-        <div className='flex flex-row items-center justify-between py-[12px]'>
-          <Typography
-            size='sm'
-            weight='regular'
-            className='text-grays-text'
+        {isMounted && (
+          <div
+            className='flex flex-row items-center justify-between py-[12px]'
+            role='group'
             tabIndex={0}
             aria-label={`Time left to pay: ${formattedTimeUntilExpiry}`}
           >
-            Time left to pay
-          </Typography>
-          {generateTimeLeftToPay()}
-        </div>
+            <Typography
+              size='sm'
+              weight='regular'
+              className='text-grays-text'
+              aria-hidden='true'
+              role='presentation'
+            >
+              Time left to pay
+            </Typography>
+            {timeLeftToPaySection}
+          </div>
+        )}
         <HorizontalDivisor />
       </div>
     </Card>

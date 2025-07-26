@@ -1,8 +1,5 @@
 'use client';
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { redirect } from 'next/navigation';
-import { AxiosError } from 'axios';
-import { useAtom } from 'jotai';
+import React, { useMemo } from 'react';
 
 // Components
 import { Button } from '@/components/ui/button';
@@ -13,42 +10,22 @@ import { Typography } from '@/components/ui/typography';
 import { QuoteOfferingComponent } from '@/components/containers/quote-offering';
 
 // Utils
-import {
-  useTransactionSummary,
-  useUpdateTransactionSummary,
-  useConfirmQuote,
-} from '@/lib/queries';
 import { API_ERROR_MESSAGES } from '@/lib/constants';
-import {
-  TransactionError,
-  TransactionSummary,
-} from '@/lib/schemas/transaction';
 
-// Store
-import { supportedCurrenciesAtom } from '@/store/currencies';
+// Hooks
+import { useAcceptQuoteState } from '@/hooks/useAcceptQuoteState';
 
 export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
-  const [transaction, setTransaction] = useState<TransactionSummary | null>(
-    null,
-  );
-  const [error, setError] = useState<TransactionError | null>(null);
-  const [supportedCurrencies] = useAtom(supportedCurrenciesAtom);
-  const { data: initialTransaction, error: initialError } =
-    useTransactionSummary(uuid);
   const {
-    mutate: updateTransactionSummary,
-    data: updatedTransaction,
-    error: updateError,
-    isPending: isUpdatePending,
-  } = useUpdateTransactionSummary(uuid);
-  const {
-    mutate: confirmQuote,
-    isPending: isConfirmPending,
-    isSuccess: isConfirmSuccess,
-  } = useConfirmQuote(uuid);
-
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<string>('none');
+    transaction,
+    error,
+    isLoading,
+    selectedPaymentMethod,
+    supportedCurrencies,
+    refreshQuote,
+    handleSelectPaymentMethod,
+    confirmQuote,
+  } = useAcceptQuoteState(uuid);
 
   const paymentOptions: SelectOption[] = useMemo(() => {
     const currencyOptions = transaction?.currencyOptions;
@@ -74,77 +51,8 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
     [selectedPaymentMethod],
   );
 
-  const refreshQuote = useCallback(() => {
-    if (selectedPaymentMethod === 'none') return;
-
-    updateTransactionSummary({
-      currency: selectedPaymentMethod,
-    });
-  }, [selectedPaymentMethod, updateTransactionSummary]);
-
-  useEffect(() => {
-    let baseTransaction = initialTransaction;
-
-    if (updatedTransaction) {
-      baseTransaction = {
-        ...updatedTransaction,
-        currencyOptions: initialTransaction?.currencyOptions,
-      };
-    }
-
-    if (baseTransaction) {
-      setTransaction(baseTransaction);
-    }
-  }, [initialTransaction, updatedTransaction]);
-
-  useEffect(() => {
-    if (initialTransaction?.status === 'EXPIRED') {
-      redirect(`/payin/${uuid}/expired`);
-    }
-
-    if (initialTransaction?.quoteStatus === 'ACCEPTED') {
-      redirect(`/payin/${uuid}/pay`);
-    }
-
-    if (initialTransaction?.paidCurrency?.currency) {
-      // Auto select the payment method if it's already been set in another session
-      handleSelectPaymentMethod(initialTransaction.paidCurrency?.currency);
-    }
-  }, [initialTransaction]);
-
-  useEffect(() => {
-    if (isConfirmSuccess) {
-      redirect(`/payin/${uuid}/pay`);
-    }
-  }, [isConfirmSuccess, uuid]);
-
-  useEffect(() => {
-    const expiredCodes = ['MER-PAY-2004', 'MER-PAY-2017'];
-    if (updateError && expiredCodes.includes(updateError?.code)) {
-      // When the transaction has expired, we redirect to the expired page
-      redirect(`/payin/${uuid}/expired`);
-    } else if (updateError) {
-      // For other error codes, we just change the error message
-      setError(updateError);
-    } else if (initialError) {
-      // META: This is a workaround to get the error message from the AxiosError
-      // because useQuery doesn't return the error message in the error object like useMutation does
-      const axiosError = initialError as AxiosError;
-      setError(axiosError.response?.data as unknown as TransactionError);
-    }
-  }, [updateError, initialError, uuid]);
-
   async function handleConfirmQuote() {
     await confirmQuote();
-  }
-
-  async function handleSelectPaymentMethod(paymentMethod: string) {
-    setSelectedPaymentMethod(paymentMethod);
-    if (paymentMethod === 'none') return;
-
-    updateTransactionSummary({
-      currency: paymentMethod,
-    });
   }
 
   if (error) {
@@ -152,6 +60,7 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
       <ErrorCard
         title={error.message || 'Error'}
         description={API_ERROR_MESSAGES[error.code]}
+        showRefreshButton
       />
     );
   }
@@ -229,16 +138,16 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
           />
         </div>
 
-        {hasSelectedPayment && (
+        {hasSelectedPayment && transaction && (
           <>
             <QuoteOfferingComponent
-              transaction={updatedTransaction}
+              transaction={transaction}
               refreshQuote={refreshQuote}
-              isLoading={isUpdatePending || isConfirmPending}
+              isLoading={isLoading}
             />
             <Button
               onClick={handleConfirmQuote}
-              disabled={isUpdatePending || isConfirmPending}
+              disabled={isLoading}
               className='w-full'
               data-testid='confirm-quote-button'
             >

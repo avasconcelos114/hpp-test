@@ -29,14 +29,23 @@ export function shortenAddress(address: string) {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
+/**
+ * Handles API errors and returns a TransactionError if the error is an Axios error
+ * @param error - The error to handle
+ * @returns The TransactionError or the original error
+ */
 export async function handleAPIError(
   error: unknown,
 ): Promise<TransactionError | unknown> {
   if (isAxiosError(error)) {
-    const errorData = await TransactionErrorSchema.validate(
-      error.response?.data,
-    );
-    return errorData;
+    try {
+      const errorData = await TransactionErrorSchema.validate(
+        error.response?.data,
+      );
+      return errorData;
+    } catch (error) {
+      return error;
+    }
   }
   return error;
 }
