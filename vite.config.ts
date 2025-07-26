@@ -11,7 +11,16 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text'],
       include: ['src/**/*.ts', 'src/**/*.tsx'],
-      exclude: ['**/*.config.*'],
+      exclude: [
+        '**/*.config.*',
+
+        // Excluding some files that are either not relevant to the test coverage
+        // or are covered by the E2E tests
+        'src/api/axios-instance.ts',
+        'src/app/layout.tsx',
+        'src/app/payin/**',
+        'src/lib/schemas/**',
+      ],
     },
   },
 });

@@ -77,17 +77,22 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
             weight='medium'
             tag='h2'
             tabIndex={0}
-            ariaLabel={`Transaction details for merchant: ${transaction?.merchantDisplayName}`}
+            ariaLabel={`Transaction details for merchant`}
           >
             {transaction?.merchantDisplayName}
           </Typography>
 
-          <div className='flex flex-row items-end gap-2'>
+          <div
+            className='flex flex-row items-end gap-2'
+            role='group'
+            tabIndex={0}
+            aria-label={`Transaction amount: ${transaction?.displayCurrency.amount} ${transaction?.displayCurrency.currency}`}
+          >
             <Typography
               size='xl'
               weight='semibold'
-              tabIndex={0}
-              ariaLabel={`Transaction amount: ${transaction?.displayCurrency.amount} ${transaction?.displayCurrency.currency}`}
+              aria-hidden='true'
+              role='presentation'
             >
               {transaction?.displayCurrency.amount}
             </Typography>

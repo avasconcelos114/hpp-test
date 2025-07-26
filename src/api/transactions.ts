@@ -81,6 +81,9 @@ export const confirmQuote = async (uuid: string): Promise<boolean> => {
   try {
     const response = await axiosInstance.put(
       `/api/v1/pay/${uuid}/accept/summary`,
+      {
+        successUrl: 'no_url',
+      },
     );
     return response.status === 200;
   } catch (error) {

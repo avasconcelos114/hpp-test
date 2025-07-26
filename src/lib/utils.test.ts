@@ -60,4 +60,30 @@ describe('handleAPIError', () => {
     );
     expect(await handleAPIError(axiosError)).toStrictEqual(error);
   });
+
+  it('should return the error if it is an Axios error with an errorList', async () => {
+    const error: TransactionError = {
+      code: 'MER-PAY-2008',
+      message: 'Transaction not found',
+      requestId: '123',
+      status: '404',
+    };
+    const config = {
+      headers: new AxiosHeaders({ 'Content-Type': 'application/json' }),
+    };
+    const axiosError: AxiosError = new AxiosError(
+      'Transaction not found',
+      'MER-PAY-2008',
+      config,
+      {},
+      {
+        data: { errorList: [error] },
+        status: 404,
+        statusText: 'Not Found',
+        headers: new AxiosHeaders({ 'Content-Type': 'application/json' }),
+        config,
+      },
+    );
+    expect(await handleAPIError(axiosError)).toStrictEqual(error);
+  });
 });

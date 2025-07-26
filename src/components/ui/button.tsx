@@ -40,6 +40,7 @@ function Button({
   return (
     <button
       data-slot='button'
+      data-testid='button'
       className={cn(buttonVariants({ size, variant, className }))}
       {...props}
     />

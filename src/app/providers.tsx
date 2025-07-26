@@ -1,11 +1,10 @@
 'use client';
-
+import React, { useEffect } from 'react';
 import {
   isServer,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { useEffect } from 'react';
 import { useSetAtom } from 'jotai';
 
 // Utils

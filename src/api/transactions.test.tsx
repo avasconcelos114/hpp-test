@@ -8,6 +8,7 @@ import {
 import { axiosInstance } from '@/api/axios-instance';
 import { SupportedCurrencies } from '@/lib/schemas/currencies';
 import { DEFAULT_CURRENCIES } from '@/lib/constants';
+import { MOCK_AXIOS_ERROR_LIST } from '@/lib/tests/mock-data';
 
 vi.mock('./axios-instance', () => ({
   axiosInstance: {
@@ -114,49 +115,34 @@ describe('Transactions', () => {
     expect(result).toBe(true);
     expect(axiosInstance.put).toHaveBeenCalledWith(
       '/api/v1/pay/123/accept/summary',
+      {
+        successUrl: 'no_url',
+      },
     );
   });
 
   it('should confirm quote (failure)', async () => {
-    (axiosInstance.put as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      status: 400,
-    });
-    const result = await confirmQuote('123');
-    expect(result).toBe(false);
+    (axiosInstance.put as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+      MOCK_AXIOS_ERROR_LIST,
+    );
+
+    await expect(confirmQuote('123')).rejects.toThrow();
   });
 
   it('should get supported currencies (success)', async () => {
-    const mockCurrencies: SupportedCurrencies = [
-      {
-        id: 1,
-        code: 'BTC',
-        fiat: false,
-        icon: null,
-        name: 'Bitcoin',
-        withdrawalParameters: [],
-        options: {},
-        withdrawalFee: 0,
-        depositFee: 0,
-        supportsDeposits: true,
-        supportsWithdrawals: true,
-        quantityPrecision: 8,
-        pricePrecision: 2,
-        protocols: [],
-      },
-    ];
     (axiosInstance.get as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      data: mockCurrencies,
+      data: DEFAULT_CURRENCIES,
     });
     const { SupportedCurrenciesSchema } = await import(
       '@/lib/schemas/currencies'
     );
     (
       SupportedCurrenciesSchema.validate as ReturnType<typeof vi.fn>
-    ).mockResolvedValueOnce(mockCurrencies);
+    ).mockResolvedValueOnce(DEFAULT_CURRENCIES);
     const result = await (
       await import('./transactions')
     ).getSupportedCurrencies();
-    expect(result).toEqual(mockCurrencies);
+    expect(result).toEqual(DEFAULT_CURRENCIES);
     expect(axiosInstance.get).toHaveBeenCalledWith(
       '/api/currency/crypto?max=100',
     );

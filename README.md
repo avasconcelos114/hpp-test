@@ -1,108 +1,143 @@
 # BVNK Test by Andre Vasconcelos
 
-Welcome to my humble repo, this is my take on how I would implement a Hosted Payments Page, as described in the [BVNK Interviews page](https://github.com/BVNK-Interviews/frontend-hpp-test). I had a lot of fun working on it and I tried to make the best use of time as possible by adding some _extra_ spices to make the app both accessible and robust :)
+Welcome to my humble repo! This is my take on implementing a Hosted Payments Page, as described in the [BVNK Interviews page](https://github.com/BVNK-Interviews/frontend-hpp-test). I had a lot of fun working on it and tried to make the best use of time by adding some _extra_ spices to make the app both accessible and robust!
 
-Note: Some of the comments in the repo have been prefixed with `META:` to signify that they are comments pertaining to the test rather than being a general comment regarding a functionality
+> **Note:** Comments prefixed with `META:` in the codebase are specifically about the test requirements rather than general functionality comments.
 
-## Prerequisites
+## 📋 Prerequisites
 
-- Node 20.19.0 (Ideally with an NVM setup)
-- Yarn (But NPM is fine too)
-- [Optional] Docker -- only if you're keen on building and running the project with Docker
+- **Node.js** 20.19.0 (ideally with NVM setup)
+- **Yarn** (NPM works too)
+- **Docker** (optional - for containerized development)
 
-## Running project locally
+## 🛠️ Tech Stack
 
-0. Run if you're running NVM, switch to the correct version using the commands below:
+| Category             | Technology                     | Purpose                                                              |
+| -------------------- | ------------------------------ | -------------------------------------------------------------------- |
+| **Framework**        | Next.js                        | Server-side UUID validation, pre-populated responses, error handling |
+| **Styling**          | Shadcn + TailwindCSS           | Speeding up component development and keeping styles consistent      |
+| **Data Fetching**    | Axios + React Query            | Streamlined async operations and flexible state management           |
+| **Validation**       | Yup                            | API response validation and improved error handling                  |
+| **State Management** | Jotai                          | Lightweight state management for centralized currency data           |
+| **Testing**          | Vitest + React Testing Library | Unit testing for utilities and components                            |
+| **E2E Testing**      | Cypress.io                     | Behavior-driven testing with live environment                        |
 
-```bash
-nvm install 20.19.0
-nvm use
-```
+## 🚀 Getting Started
 
-1. Install all the needed dependencies
+### Local Development
 
-```bash
-yarn
-```
+1. **Switch to correct Node version** (if using NVM):
 
-3. Run in dev mode
+   ```bash
+   nvm install 20.19.0
+   nvm use
+   ```
 
-```bash
-yarn dev
-```
+2. **Install dependencies**:
 
-Voila! You have a running local dev environment, feel free to test to your heart's content
+   ```bash
+   yarn
+   ```
 
-## Running in production mode with Docker
+3. **Start development server**:
 
-If you're looking to simulate how this could run in production, you are welcome to build the Docker image and run it locally as well!
+   ```bash
+   yarn dev
+   ```
 
-0. Build it
+   Voilà! You now have a running local development environment. Feel free to test to your heart's content! 🎉
 
-```bash
-yarn docker:build
-```
+### Production with Docker
 
-1. Run it
+I decided to use Docker for a quick and easy way to have a production environment running that can be replicated to live infrastructure
 
-```bash
-yarn docker:run
-```
+1. **Build the Docker image**:
 
-## Running Unit Tests
+   ```bash
+   yarn docker:build
+   ```
 
-0. Start the test runner (with coverage reporting)
+2. **Run the container**:
+   ```bash
+   yarn docker:run
+   ```
+
+## 🧪 Testing
+
+### Unit Tests
+
+Run the test suite with coverage reporting:
 
 ```bash
 yarn test:coverage
 ```
 
-## Running E2E Tests
+### E2E Tests
 
-0. Run the project in test mode to enable instrumentation (code coverage reporting will not work otherwise)
+1. **Start the project in test mode** (required for instrumentation):
 
 ```bash
 NODE_ENV=test yarn dev
 ```
 
-1. Run the cypress runner (to run the E2E tests properly, you will need to make an API call to create a payment manually, and then use its uuid value in the env var below, Cypress will work its ✨ magic ✨ from here)
+2. **Run Cypress tests**:
 
 ```bash
 yarn cypress:run --env uuid={PASTED_UUID}
 ```
 
-I would have liked to create a cypress task that makes a call to create a payment and injects its UUID on its own, but that would mean having to set up API credentials as the project's env vars so I decided to keep it simple
+> **Note:** You'll need to manually create a payment via API call and use its UUID in the environment variable. I considered automating this with Cypress tasks, but it would require exposing API credentials in environment variables, so I resisted the urge and kept it simple
 
-2. Check converage reports
+3. **Check coverage reports**:
 
 ```bash
 yarn cypress:coverage
 ```
 
-## Main Libraries/Tooling Used
+## 🎯 Key Features & Enhancements
 
-- `Next.js`: I've opted to use Next.js to validate UUIDs server-side when accessing a page and providing an already-populated response to the client (and handle invalid or failed requests)
-- `Shadcn` + `TailwindsCSS`: To simplify component creation and focus the development time on feature completion rather than component structure or styling
-- `Axios` + `React Query`: To streamline the async calls, and allow for some flexibility when handling the various states of API requests
-- `Yup`: Used as a way to quickly be able to validate API responses/values and improve the error handling
-- `Jotai`: Very light-weight state management library to simplify and centralize access to the currencies fetched from the API (one of the stretch goals)
-- `Vitest` + `React Testing Library`: Used to perform unit tests on the utility functions and components
-- `Cypress`: Chosen as a way to automate tests with live data from the perspective of the user (Behavior Driven)
+### Error Handling
 
-## Considerations
+- **Robust error management** with handling for multiple flows that include checking for invalid UUID values, "illegal" summary updates, and mapping of many of the error codes present in the [BVNK API documentation](https://docs.bvnk.com/reference/errors)
 
-- While not originally a part of the specs, I've added more robust forms of error handling that expand beyond the expired page, which accounts for invalid UUIDs in the URL, as well as a few of the error codes present in the https://docs.bvnk.com/reference/errors documentation
+### Accessibility
 
-- As a personal challenge, I tried to make all pages screen-reader friendly (tested with VoiceOver on MacOS) and keyboard navigatable
-  - If testing the screen reader, please run the project with Docker as the next.js devtool button loves to steal keyboard focus and disrupt the flow of navigation
+- **Screen reader friendly** (tested with VoiceOver on macOS)
+- **Full keyboard navigation** support
 
-- As an _extra_ bit of challenge, I also used one of the BVNK APIs to fetch the list of cryptocurrencies supported by BVNK, so that you can make full use of the `currencyOptions` part of the response from the crypto summary API
+> **Note:** For screen reader testing, use the Docker version as Next.js devtools can interfere with keyboard focus.
 
-- I tried to keep fidelity to the style names in Figma as much as possible, but they turned out a bit strange when getting "translated" to TailwindsCSS-compatible names, in this scenario I would collaborate with designers to get a good naming convention that is clear and works well both for developers _and_ designers
+### API Integration
 
-- We have a cocktail of unit and E2E tests since we want both to have control over individual features of each UI component / utility / hook, but we also want to make sure that the entire flow from the perspective of the user behaves as intended. While neither test suite has achieved 100% coverage, each of them are testing the aspects that the other isn't able to individually (e.g. The unit tests cover the defensive code and error catcher that the E2E env can't reproduce, and the E2E environment makes live API calls and runs schema validations in a way unit tests can't)
+- **Dynamic cryptocurrency fetching** using BVNK APIs to retrieve the full list of supported currencies, with a fallback mechanism to the assigned 3 (`BTC`, `ETH`, `LTC`)
 
-## Suggestions
+### Design Fidelity
 
-- The [Timers](https://github.com/BVNK-Interviews/frontend-hpp-test?tab=readme-ov-file#timers) section in the README file that contains the instructions could benefit from having its endpoint corrected to `PUT https://api.sandbox.bvnk.com/api/v1/pay/<UUID>/update/summary`, since the `PUT https://api.sandbox.bvnk.com/api/v1/pay/<UUID>/summary` endpoint seems to result in an internal server error and is nowhere to be found in the API documentation (but then again, it _could_ stay as a part of the test to push us test takers to find and study the API docs 😉)
-  - On a similar note, it seems as though the `payInMethod` value is no longer required as part of the payload and could be removed from the README
+- **Figma style adherence** for color naming, as well as other paddings and margin values
+
+> **Note:** Some of the color variable names ended up sounding a little awkward when used as a TailwindsCSS class, in a real production scenario I would collaborate with designers so that the design language can be aligned and work for both designers and developers
+
+## 🧪 Testing Strategy
+
+I decided to employ a **dual testing approach**:
+
+| Test Type      | Coverage                   | Purpose                                                                        |
+| -------------- | -------------------------- | ------------------------------------------------------------------------------ |
+| **Unit Tests** | Component/utility features | Snapshot testing for UI components, Defensive code, error handling, edge cases |
+| **E2E Tests**  | User workflows             | Live API integration, schema validation, user perspective                      |
+
+> **Why both?** Each test suite covers aspects the other cannot. Unit tests handle defensive code that E2E can't easily reproduce, while E2E tests make live API calls and validate schemas in ways unit tests cannot.
+
+## 💡 Suggestions for Improvement
+
+### API Documentation Updates
+
+The [Timers section](https://github.com/BVNK-Interviews/frontend-hpp-test?tab=readme-ov-file#timers) in the original README could benefit from:
+
+1. **Endpoint correction**:
+   - ❌ `PUT https://api.sandbox.bvnk.com/api/v1/pay/<UUID>/summary`
+   - ✅ `PUT https://api.sandbox.bvnk.com/api/v1/pay/<UUID>/update/summary`
+
+   The original endpoint described in the README results in internal server errors and isn't documented in the API docs, though of course this "incorrect" endpoint could be kept as part of the test to encourage us test takers to study the API! 😉
+
+2. **Payload simplification**: The `payInMethod` value from the update summary API is not a required value and could be removed from the README

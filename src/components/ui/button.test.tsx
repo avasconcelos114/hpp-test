@@ -7,6 +7,7 @@ describe('Button', () => {
   it('should render the button', () => {
     render(<Button>Click me</Button>);
     expect(screen.getByText('Click me')).toBeDefined();
+    expect(screen.getByTestId('button')).toMatchSnapshot();
   });
 
   it('should have default variant and size classes', () => {

@@ -75,7 +75,12 @@ export function ErrorCard({
         </Typography>
       </div>
       {showRefreshButton && (
-        <Button size='sm' className='w-full' onClick={handleRefresh}>
+        <Button
+          data-testid='refresh-button'
+          size='sm'
+          className='w-full'
+          onClick={handleRefresh}
+        >
           Refresh
         </Button>
       )}
