@@ -117,16 +117,19 @@ yarn cypress:coverage
 
 ## 🎯 Key Features & Enhancements
 
-### Error Handling
-
-- **Robust error management** with handling for multiple flows that include checking for invalid UUID values, "illegal" summary updates, and mapping of many of the error codes present in the [BVNK API documentation](https://docs.bvnk.com/reference/errors)
-
-### Accessibility
+### Accessibility & Performance
 
 - **Screen reader friendly** (tested with VoiceOver on macOS)
 - **Full keyboard navigation** support
+- **500ms** to render a fully populated view with no cumulative layout shift
 
-> **Note:** For screen reader testing, use the Docker version as Next.js devtools can interfere with keyboard focus.
+![](/docs/lighthouse_results.png)
+
+> **Note:** For screen reader testing, run app in production mode (via Docker or `yarn start`) as Next.js devtools can interfere with keyboard focus.
+
+### Error Handling
+
+- **Robust error management** with handling for multiple flows that include checking for invalid UUID values, "illegal" summary updates, and mapping of many of the error codes present in the [BVNK API documentation](https://docs.bvnk.com/reference/errors)
 
 ### API Integration
 
@@ -142,12 +145,12 @@ yarn cypress:coverage
 
 I decided to employ a **dual testing approach**:
 
-| Test Type      | Coverage                   | Purpose                                                                        |
-| -------------- | -------------------------- | ------------------------------------------------------------------------------ |
-| **Unit Tests** | Component/utility features | Snapshot testing for UI components, Defensive code, error handling, edge cases |
-| **E2E Tests**  | User workflows             | Live API integration, schema validation, user perspective                      |
+| Test Type      | Coverage                   | Purpose                                                          |
+| -------------- | -------------------------- | ---------------------------------------------------------------- |
+| **Unit Tests** | Component/utility features | Snapshot testing for UI components, error handling, edge cases   |
+| **E2E Tests**  | Behavior driven testing    | Testing full scenarios from user perspective with live API calls |
 
-> **Why both?** Each test suite covers aspects the other cannot. Unit tests handle defensive code that E2E can't easily reproduce, while E2E tests make live API calls and validate schemas in ways unit tests cannot.
+> **Why both?** Each test suite covers aspects the other cannot. Unit tests handle defensive code that E2E can't easily reproduce, while E2E tests make live API calls and validate schemas in ways that are more reliable than mocking static responses
 
 ## 💡 Suggestions for Improvement
 
@@ -162,3 +165,9 @@ The [Timers section](https://github.com/BVNK-Interviews/frontend-hpp-test?tab=re
    The original endpoint described in the README results in internal server errors and isn't documented in the API docs, though of course this "incorrect" endpoint could be kept as part of the test to encourage us test takers to study the API! 😉
 
 2. **Payload simplification**: The `payInMethod` value from the update summary API is not a required value and could be removed from the README
+
+### Supported Currencies in sandbox environment
+
+While not something I _should_ have discovered by following the test parameters, but I found that attempting to assign PayPal USD (`PYUSD`) or Polygon (`POL`) to a transaction (as they were included in `currencyOptions`) very steadily causes a 500 error in the sandbox environment.
+
+I'm not sure if this is expected and a known issue but I thought it would help to report it
