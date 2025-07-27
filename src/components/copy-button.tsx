@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 
+// META: Reset time increased to 5 seconds to allow screen reader
+// the time to read the button's new state
 const COPY_RESET_TIME = 5000;
 
 export function CopyButton({

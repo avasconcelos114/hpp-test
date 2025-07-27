@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { vi, expect } from 'vitest';
-import CurrenciesProvider from './currencies-provider';
+import CurrenciesProvider from './root-provider';
 import { getSupportedCurrencies } from '@/api/transactions';
 import { DEFAULT_CURRENCIES } from '@/lib/constants';
 

@@ -54,7 +54,7 @@ export function QuoteOfferingComponent({
   }
 
   function generateTimeUntilExpiry() {
-    if (isLoading || !transaction?.acceptanceExpiryDate || !isMounted) {
+    if (isLoading || !transaction?.acceptanceExpiryDate) {
       return <Loader2 className='text-bvnk-primary animate-spin' size={18} />;
     }
 
@@ -65,7 +65,7 @@ export function QuoteOfferingComponent({
         className='text-grays-text'
         data-testid='time-until-expiry'
       >
-        {formattedTimeUntilExpiry}
+        {isMounted ? formattedTimeUntilExpiry : '00:00:00'}
       </Typography>
     );
   }
@@ -90,7 +90,7 @@ export function QuoteOfferingComponent({
         className='flex flex-row items-center justify-between py-[12px]'
         role='group'
         tabIndex={0}
-        aria-label={`Quoted price expires in: ${formattedTimeUntilExpiry}`}
+        aria-label={`Quoted price expires in: ${isMounted ? formattedTimeUntilExpiry : ''}`}
       >
         <Typography size='sm' weight='regular' className='text-grays-text'>
           Quoted price expires in

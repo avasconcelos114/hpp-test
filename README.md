@@ -22,6 +22,27 @@ Welcome to my humble repo! This is my take on implementing a Hosted Payments Pag
 | **Testing**          | Vitest + React Testing Library | Unit testing for utilities and components                            |
 | **E2E Testing**      | Cypress.io                     | Behavior-driven testing with live environment                        |
 
+## 🗺️ Project Structure
+
+```bash
+.
+├── cypress/
+│   ├── e2e/            # Where the E2E Test Suites live in
+│   └── support/        # Where we have custom configuration for Cypress
+├── src/
+│   ├── api/            # The Axios configuration + All async calls to server
+│   ├── app/            # The place for all the page configurations and providers
+│   ├── components/
+│   │   ├── containers/ # Stateful components that comprise the main parts of the app
+│   │   ├── ui/         # Stateless UI components
+│   │   └── ...         # Any other simple components that are stateful
+│   ├── hooks/          # custom hooks that abstract away business logic and reusable component logic
+│   ├── lib/
+│   │   ├── schemas/    # Where Zod schemas and related types are maintained
+│   │   └── tests/      # Where we keep mock data for unit tests
+└   └── store/          # Where we keep jotai stores
+```
+
 ## 🚀 Getting Started
 
 ### Local Development

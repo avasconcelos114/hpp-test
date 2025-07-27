@@ -2,7 +2,7 @@ import { getSupportedCurrencies } from '@/api/transactions';
 import Providers from '@/app/providers';
 import React from 'react';
 
-export default async function CurrenciesProvider({
+export default async function RootProvider({
   children,
 }: {
   children: React.ReactNode;

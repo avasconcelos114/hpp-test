@@ -55,7 +55,6 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
   }, [transaction]);
 
   const timeLeftToPaySection = useMemo(() => {
-    if (!isMounted) return null;
     return (
       <Typography
         size='sm'
@@ -63,7 +62,7 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
         aria-hidden='true'
         role='presentation'
       >
-        {formattedTimeUntilExpiry}
+        {isMounted ? formattedTimeUntilExpiry : '00:00:00'}
       </Typography>
     );
   }, [formattedTimeUntilExpiry, isMounted]);
@@ -118,14 +117,16 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
             Pay with {currencyName}
           </Typography>
 
-          <Typography
-            size='sm'
-            weight='regular'
-            className='text-grays-text text-center'
-          >
-            To complete this payment send the amount
-            <br /> due to the {currencyName} address provided below.
-          </Typography>
+          <div className='mx-[50px] flex flex-col items-center'>
+            <Typography
+              size='sm'
+              weight='regular'
+              className='text-grays-text text-center'
+            >
+              To complete this payment send the amount due to the {currencyName}{' '}
+              address provided below.
+            </Typography>
+          </div>
         </div>
       )}
       <div className='flex w-full flex-col'>
@@ -184,25 +185,23 @@ export function PayQuoteComponent({ uuid }: { uuid: string }) {
           </div>
         )}
         <HorizontalDivisor />
-        {isMounted && (
-          <div
-            className='flex flex-row items-center justify-between py-[12px]'
-            role='group'
-            tabIndex={0}
-            aria-label={`Time left to pay: ${formattedTimeUntilExpiry}`}
+        <div
+          className='flex flex-row items-center justify-between py-[12px]'
+          role='group'
+          tabIndex={0}
+          aria-label={`Time left to pay: ${isMounted ? formattedTimeUntilExpiry : '00:00:00'}`}
+        >
+          <Typography
+            size='sm'
+            weight='regular'
+            className='text-grays-text'
+            aria-hidden='true'
+            role='presentation'
           >
-            <Typography
-              size='sm'
-              weight='regular'
-              className='text-grays-text'
-              aria-hidden='true'
-              role='presentation'
-            >
-              Time left to pay
-            </Typography>
-            {timeLeftToPaySection}
-          </div>
-        )}
+            Time left to pay
+          </Typography>
+          {timeLeftToPaySection}
+        </div>
         <HorizontalDivisor />
       </div>
     </Card>

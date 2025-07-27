@@ -16,16 +16,6 @@ import { supportedCurrenciesAtom } from '@/store/currencies';
 
 export function useAcceptQuoteState(uuid: string) {
   /*********************************
-   * Local States
-   *********************************/
-  const [transaction, setTransaction] = useState<TransactionSummary | null>(
-    null,
-  );
-  const [error, setError] = useState<TransactionError | null>(null);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<string>('none');
-
-  /*********************************
    * Atoms
    *********************************/
   const [supportedCurrencies] = useAtom(supportedCurrenciesAtom);
@@ -36,7 +26,7 @@ export function useAcceptQuoteState(uuid: string) {
   const {
     data: initialTransaction,
     error: initialError,
-    isPending: isInitialPending,
+    isLoading: isInitialLoading,
   } = useTransactionSummary(uuid);
   const {
     mutate: updateTransactionSummary,
@@ -50,6 +40,17 @@ export function useAcceptQuoteState(uuid: string) {
     isSuccess: isConfirmSuccess,
     error: confirmError,
   } = useConfirmQuote(uuid);
+
+  /*********************************
+   * Local States
+   *********************************/
+  const [transaction, setTransaction] = useState<TransactionSummary | null>(
+    initialTransaction || null,
+  );
+  const [error, setError] = useState<TransactionError | null>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
+    initialTransaction?.paidCurrency?.currency || 'none',
+  );
 
   /*********************************
    * Handlers
@@ -134,7 +135,7 @@ export function useAcceptQuoteState(uuid: string) {
   /*********************************
    * Computed Values
    *********************************/
-  const isLoading = isUpdatePending || isInitialPending || isConfirmPending;
+  const isLoading = isUpdatePending || isInitialLoading || isConfirmPending;
 
   return {
     transaction,

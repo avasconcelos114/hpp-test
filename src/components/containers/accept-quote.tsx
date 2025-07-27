@@ -1,5 +1,6 @@
 'use client';
 import React, { useMemo } from 'react';
+import { Loader2 } from 'lucide-react';
 
 // Components
 import { Button } from '@/components/ui/button';
@@ -65,6 +66,16 @@ export function AcceptQuoteComponent({ uuid }: { uuid: string }) {
         description={API_ERROR_MESSAGES[error.code]}
         showRefreshButton={ALLOW_REFRESH_QUOTE_ERROR_CODES.includes(error.code)}
       />
+    );
+  }
+
+  if (!transaction) {
+    return (
+      <Card className='w-[460px]'>
+        <div className='flex h-[220px] flex-col items-center justify-center'>
+          <Loader2 className='text-bvnk-primary h-10 w-10 animate-spin' />
+        </div>
+      </Card>
     );
   }
 

@@ -1,11 +1,12 @@
 'use client';
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   isServer,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { useSetAtom } from 'jotai';
+import { Provider as JotaiProvider } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
 
 // Utils
 import { SupportedCurrencies } from '@/lib/schemas/currencies';
@@ -32,6 +33,18 @@ function getQueryClient() {
   }
 }
 
+function HydrateAtoms({
+  children,
+  currencies,
+}: {
+  children: React.ReactNode;
+  currencies: SupportedCurrencies;
+}) {
+  useHydrateAtoms([[supportedCurrenciesAtom, currencies]]);
+
+  return <>{children}</>;
+}
+
 export default function Providers({
   children,
   currencies,
@@ -40,13 +53,14 @@ export default function Providers({
   currencies: SupportedCurrencies;
 }) {
   const queryClient = getQueryClient();
-  const setSupportedCurrencies = useSetAtom(supportedCurrenciesAtom);
-
-  useEffect(() => {
-    setSupportedCurrencies(currencies);
-  }, [currencies, setSupportedCurrencies]);
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <JotaiProvider>
+      <HydrateAtoms currencies={currencies}>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </HydrateAtoms>
+    </JotaiProvider>
   );
 }

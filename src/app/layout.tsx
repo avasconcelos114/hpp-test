@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import type { Metadata } from 'next';
 
 import { cn } from '@/lib/utils';
-import CurrenciesProvider from './currencies-provider';
+import RootProvider from './root-provider';
 
 import './globals.css';
 
@@ -40,7 +40,7 @@ export default function RootLayout({
           'font-inter',
         )}
       >
-        <CurrenciesProvider>{children}</CurrenciesProvider>
+        <RootProvider>{children}</RootProvider>
       </body>
     </html>
   );
