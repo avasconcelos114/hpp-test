@@ -109,13 +109,21 @@ export const TransactionSummarySchema = object({
 });
 export type TransactionSummary = InferType<typeof TransactionSummarySchema>;
 
+export enum TransactionErrorCodesEnum {
+  PAYMENT_NOT_FOUND_ERROR = 'MER-PAY-2008',
+  STATUS_CHANGE_ERROR = 'MER-PAY-2017',
+  EXPIRED_ERROR = 'MER-PAY-2004',
+  PAYOUT_ADDRESS_ERROR = 'MER-PAY-2028',
+  UNEXPECTED_ERROR = 'MER-PAY-4002',
+}
+
 export const TransactionErrorCodesSchema = string()
   .oneOf([
-    'MER-PAY-2008',
-    'MER-PAY-2017',
-    'MER-PAY-2004',
-    'MER-PAY-2028',
-    'MER-PAY-4002',
+    TransactionErrorCodesEnum.PAYMENT_NOT_FOUND_ERROR,
+    TransactionErrorCodesEnum.STATUS_CHANGE_ERROR,
+    TransactionErrorCodesEnum.EXPIRED_ERROR,
+    TransactionErrorCodesEnum.PAYOUT_ADDRESS_ERROR,
+    TransactionErrorCodesEnum.UNEXPECTED_ERROR,
   ])
   .required();
 export type TransactionErrorCodes = InferType<

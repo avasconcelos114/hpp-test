@@ -7,6 +7,7 @@ import {
 } from '@/api/transactions';
 import { axiosInstance } from '@/api/axios-instance';
 import { SupportedCurrencies } from '@/lib/schemas/currencies';
+
 import { DEFAULT_CURRENCIES } from '@/lib/constants';
 import { MOCK_AXIOS_ERROR_LIST } from '@/lib/tests/mock-data';
 
@@ -21,6 +22,9 @@ vi.mock('./axios-instance', () => ({
 vi.mock('@/lib/schemas/transaction', () => ({
   TransactionSummarySchema: {
     validate: vi.fn().mockResolvedValue({ id: '123', foo: 'bar' }),
+  },
+  TransactionErrorCodesEnum: {
+    MER_PAY_2017: 'MER-PAY-2017',
   },
   TransactionErrorSchema: {
     validate: vi.fn().mockResolvedValue({

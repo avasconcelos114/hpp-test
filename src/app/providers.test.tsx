@@ -1,13 +1,18 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { vi, expect } from 'vitest';
+import { vi, expect, beforeEach } from 'vitest';
 import Providers from './providers';
-import { useSetAtom } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
 import { SupportedCurrencies } from '@/lib/schemas/currencies';
 
 vi.mock('jotai', () => ({
   useSetAtom: vi.fn(),
-  atom: vi.fn(),
+  atom: vi.fn(() => 'mock-atom'),
+  Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
+vi.mock('jotai/utils', () => ({
+  useHydrateAtoms: vi.fn(),
 }));
 
 const mockCurrencies: SupportedCurrencies = [
@@ -25,17 +30,18 @@ const mockCurrencies: SupportedCurrencies = [
 ];
 
 describe('Providers', () => {
-  it('should render the providers and set the supported currencies', () => {
-    const setSupportedCurrencies = vi.fn();
-    (useSetAtom as ReturnType<typeof vi.fn>).mockReturnValue(
-      setSupportedCurrencies,
-    );
+  beforeEach(() => {
+    vi.mocked(useHydrateAtoms).mockClear();
+  });
 
+  it('should render the providers and set the supported currencies', () => {
     render(
       <Providers currencies={mockCurrencies}>
         <div>test</div>
       </Providers>,
     );
-    expect(setSupportedCurrencies).toHaveBeenCalledWith(mockCurrencies);
+    expect(useHydrateAtoms).toHaveBeenCalledWith([
+      ['mock-atom', mockCurrencies],
+    ]);
   });
 });

@@ -1,4 +1,7 @@
-import { TransactionErrorCodes } from '@/lib/schemas/transaction';
+import {
+  TransactionErrorCodes,
+  TransactionErrorCodesEnum,
+} from '@/lib/schemas/transaction';
 import { SupportedCurrencies } from '@/lib/schemas/currencies';
 
 export const REFRESH_QUOTE_INTERVAL = 1000;
@@ -6,20 +9,20 @@ export const REFRESH_QUOTE_INTERVAL = 1000;
 // META: In here we would have an exhaustive list of all possible errors that can happen
 // when interacting with the API.
 export const API_ERROR_MESSAGES: Record<TransactionErrorCodes, string> = {
-  'MER-PAY-2017':
+  [TransactionErrorCodesEnum.STATUS_CHANGE_ERROR]:
     'Unable to change the status of this payment. Please create a new payment and try again.',
-  'MER-PAY-2004':
+  [TransactionErrorCodesEnum.EXPIRED_ERROR]:
     'The transaction has expired. Please create a new payment and try again.',
-  'MER-PAY-2008':
+  [TransactionErrorCodesEnum.PAYMENT_NOT_FOUND_ERROR]:
     'The payment you requested has not been found. Please create a new payment and try again.',
-  'MER-PAY-2028':
+  [TransactionErrorCodesEnum.PAYOUT_ADDRESS_ERROR]:
     "We couldn't process your payout request to the desired address, please try another one.",
-  'MER-PAY-4002':
+  [TransactionErrorCodesEnum.UNEXPECTED_ERROR]:
     'An unexpected error occurred. Please refresh the page and try again.',
 };
 
 export const ALLOW_REFRESH_QUOTE_ERROR_CODES: TransactionErrorCodes[] = [
-  'MER-PAY-4002',
+  TransactionErrorCodesEnum.UNEXPECTED_ERROR,
 ];
 
 export const DEFAULT_CURRENCIES: SupportedCurrencies = [

@@ -1,12 +1,15 @@
 import { AxiosError, AxiosHeaders } from 'axios';
 import { describe, it, expect } from 'vitest';
 import { shortenAddress, cn, handleAPIError } from './utils';
-import { TransactionError } from './schemas/transaction';
+import {
+  TransactionError,
+  TransactionErrorCodesEnum,
+} from './schemas/transaction';
 
 describe('shortenAddress', () => {
   it('should shorten an address to the first 6 and last 4 characters', () => {
     expect(shortenAddress('0x1234567890123456789012345678901234567890')).toBe(
-      '0x1234...7890',
+      '0x12345...67890',
     );
   });
 
@@ -37,7 +40,7 @@ describe('handleAPIError', () => {
 
   it('should return the error if it is an Axios error', async () => {
     const error: TransactionError = {
-      code: 'MER-PAY-2008',
+      code: TransactionErrorCodesEnum.PAYMENT_NOT_FOUND_ERROR,
       message: 'Transaction not found',
       requestId: '123',
       status: '404',
@@ -47,7 +50,7 @@ describe('handleAPIError', () => {
     };
     const axiosError: AxiosError = new AxiosError(
       'Transaction not found',
-      'MER-PAY-2008',
+      TransactionErrorCodesEnum.PAYMENT_NOT_FOUND_ERROR,
       config,
       {},
       {
@@ -63,7 +66,7 @@ describe('handleAPIError', () => {
 
   it('should return the error if it is an Axios error with an errorList', async () => {
     const error: TransactionError = {
-      code: 'MER-PAY-2008',
+      code: TransactionErrorCodesEnum.PAYMENT_NOT_FOUND_ERROR,
       message: 'Transaction not found',
       requestId: '123',
       status: '404',

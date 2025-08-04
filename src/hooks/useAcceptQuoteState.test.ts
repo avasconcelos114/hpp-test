@@ -78,7 +78,7 @@ describe('useAcceptQuoteState', () => {
         useTransactionSummary: vi.fn().mockReturnValue({
           data: null,
           error: null,
-          isPending: true,
+          isLoading: true,
         }),
         useUpdateTransactionSummary: vi.fn().mockReturnValue({
           mutate: vi.fn(),

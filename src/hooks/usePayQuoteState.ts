@@ -6,14 +6,34 @@ import { useEffect, useState } from 'react';
 import { redirect } from 'next/navigation';
 
 export function usePayQuoteState(uuid: string) {
+  /*********************************
+   * Atoms
+   *********************************/
+  const [supportedCurrencies] = useAtom(supportedCurrenciesAtom);
+
+  /*********************************
+   * Queries
+   *********************************/
   const { data: transaction } = useTransactionSummary(uuid);
 
-  const [supportedCurrencies] = useAtom(supportedCurrenciesAtom);
+  /*********************************
+   * States
+   *********************************/
   const [isMounted, setIsMounted] = useState(false);
   const { formattedTimeUntilExpiry, isExpired } = useTimer(
     transaction?.expiryDate ?? null,
   );
 
+  /*********************************
+   * Effects
+   *********************************/
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  /*********************************
+   * Redirects
+   *********************************/
   if (isExpired) {
     redirect(`/payin/${uuid}/expired`);
   }
@@ -22,10 +42,6 @@ export function usePayQuoteState(uuid: string) {
     // If no quote has been accepted yet, redirect to the accept quote page
     redirect(`/payin/${uuid}`);
   }
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   return {
     isMounted,
